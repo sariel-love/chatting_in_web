@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+    <title>登录</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft Yahei", sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .login-container {
+            background-color: white;
+            width: 100%;
+            max-width: 400px;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .login-title {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #409eff;
+            box-shadow: 0 0 0 2px rgba(64, 158, 255, 0.2);
+        }
+
+        .error-tip {
+            color: #f56c6c;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #409eff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+
+        .login-btn:hover {
+            background-color: #3399ff;
+        }
+
+        .login-btn:disabled {
+            background-color: #a0cfff;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+<div class="login-container">
+    <h2 class="login-title">用户登录</h2>
+    <form id="loginForm">
+        <div class="form-group">
+            <label for="phone_number">手机号</label>
+            <input type="tel" id="phone_number" placeholder="请输入11位手机号" maxlength="11">
+            <div class="error-tip" id="phoneError">请输入有效的11位手机号</div>
+        </div>
+        <div class="form-group">
+            <label for="password">密码</label>
+            <input type="password" id="password" placeholder="请输入6-16位密码">
+            <div class="error-tip" id="pwdError">密码长度需在6-16位之间</div>
+        </div>
+        <button type="submit" class="login-btn" id="submitBtn">登录</button>
+    </form>
+</div>
+
+<script>
+    //jQuery方法，不容易出错，但速度慢，性能稍差，需要额外引入库
+    var phone_number = $("#phone_number").val
+    var password = $("#password").val
+    //js方法，容易出错，但速度稍快，更底层
+    // var phone_number = document.getElementById("phone_number").value;
+    // var password = document.getElementById("password").value;
+    $.ajax({
+        type:post, //post比get更安全
+        url:"/login/login",
+        data:{"phone_number":phone_number(),"password":password},
+        dataType:"json",
+        success :function (data){
+            console.log(data);
+            if(data.code == "200"){
+                window.location.href = "http://localhost:8080/login/chat"
+            }
+        }
+    })
+</script>
+</body>
+</html>
