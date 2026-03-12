@@ -1,4 +1,4 @@
-package entity;
+package com.example.chatting_in_web.entity;
 
 public class LoginUser {
     private String phone_number;

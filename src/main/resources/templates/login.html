@@ -107,29 +107,31 @@
             <input type="password" id="password" placeholder="请输入6-16位密码">
             <div class="error-tip" id="pwdError">密码长度需在6-16位之间</div>
         </div>
-        <button type="submit" class="login-btn" id="submitBtn">登录</button>
+        <button type="submit" class="login-btn" id="submitBtn" onclick="login()">登录</button>
     </form>
 </div>
 
 <script>
-    //jQuery方法，不容易出错，但速度慢，性能稍差，需要额外引入库
-    var phone_number = $("#phone_number").val
-    var password = $("#password").val
-    //js方法，容易出错，但速度稍快，更底层
-    // var phone_number = document.getElementById("phone_number").value;
-    // var password = document.getElementById("password").value;
-    $.ajax({
-        type:post, //post比get更安全
-        url:"/login/login",
-        data:{"phone_number":phone_number(),"password":password},
-        dataType:"json",
-        success :function (data){
-            console.log(data);
-            if(data.code == "200"){
-                window.location.href = "http://localhost:8080/login/chat"
+    function login() {
+        //jQuery方法，不容易出错，但速度慢，性能稍差，需要额外引入库
+        var phone_number = $("#phone_number").val
+        var password = $("#password").val
+        //js方法，容易出错，但速度稍快，更底层
+        // var phone_number = document.getElementById("phone_number").value;
+        // var password = document.getElementById("password").value;
+        $.ajax({
+            type: "post", //post比get更安全
+            url: "/login/login",
+            data: {"phone_number": phone_number(), "password": password},
+            dataType: "json",
+            success: function (data) {
+                console.log(data);
+                if (data.code == "200") {
+                    window.location.href = "http://localhost:8080/login/chat"
+                }
             }
-        }
-    })
+        })
+    }
 </script>
 </body>
 </html>

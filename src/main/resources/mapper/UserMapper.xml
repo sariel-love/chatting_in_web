@@ -2,10 +2,10 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="dao.UserDao">
+<mapper namespace="com.example.chatting_in_web.dao.UserDao">
 
-    <select id="FindUser" resultType="entity.LoginUser">
+    <select id="findUser" resultType="com.example.chatting_in_web.entity.LoginUser">
         select user.phone_number,user.password from user where
-        phone_number = #{phone_number} and passward = #{passwor}
+        phone_number = #{phone_number} and password = #{password}
     </select>
 </mapper>

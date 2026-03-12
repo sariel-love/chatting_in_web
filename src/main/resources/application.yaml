@@ -1,4 +1,4 @@
-Spring:
+spring:
 #  数据库
   datasource:
     url: jdbc:mysql://localhost:3306/chatting?useUnicode=true&characterEncoding=utf-8
@@ -12,7 +12,9 @@ Spring:
     prefix: classpath:/templates/
     suffix: .html
     mode: HTML5
+  mvc:
+    static-path-pattern: /static/**
 #        mybatis
-  mybatis:
+mybatis:
     mapper-locations: classpath:mapper/*.xml  #对应mapper映射xml文件所在路径
-    type-aliases-package: entity  #对应实体类路径
+    type-aliases-package: com.example.chatting_in_web.entity  #对应实体类路径
