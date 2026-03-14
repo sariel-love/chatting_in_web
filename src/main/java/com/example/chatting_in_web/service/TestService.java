@@ -12,10 +12,5 @@ public class TestService {
     @Autowired
     UserDao userDao;
 
-    public void findAll() {
-        List<User> users = userDao.showAll();
-        for (User user : users) {
-            System.out.println(user);
-        }
-    }
+
 }

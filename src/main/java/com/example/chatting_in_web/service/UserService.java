@@ -20,7 +20,7 @@ public class UserService {
         if(User_forLogin == null){
             return "This user is not existing";
         }
-        if(password != User_forLogin.get(0).getPassword()){
+        if(!password.equals( User_forLogin.get(0).getPassword())){
             return "Password is not true";
         }
         return "welcome logining";

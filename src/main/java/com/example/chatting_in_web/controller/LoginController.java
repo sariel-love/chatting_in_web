@@ -37,6 +37,7 @@ public class LoginController {
         }else{
             return "{\"code\":500\",\"message\":\"false\"}";
         }
+
     }
     @RequestMapping("/chat")
     public String  toChat(){
