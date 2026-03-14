@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.example.chatting_in_web.service.UserService;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.List;
+
 @Controller
 @RequestMapping("/login")
 public class LoginController {
@@ -24,17 +26,25 @@ public class LoginController {
     @RequestMapping("/login")
     @ResponseBody
     public String Login(LoginUser loginUser, HttpServletRequest request){
-//        LoginUser user = userService.FindUser_forLogin(loginUser.getPhone_number(),loginUser.getPassword());
-//        if(user != null){//设置session为后续聊天业务做准备
+        String result = userService.FindUser_forLogin(loginUser.getPhone_number(),loginUser.getPassword());
+        System.out.println(result);
+        if(result.equals("welcome logining")){//设置session为后续聊天业务做准备
             HttpSession session = request.getSession();
             session.setAttribute("loginUser",loginUser);
             return "{\"code\":\"200\",\"message\":\"success\"}";
-//        }else{
-//            return"{\"code\":500\",\"message\":\"false\"}";
-//        }
+       }else if(result.equals("Password is not true")){
+           return "{\"code\":400\",\"message\":\"false\"}";
+        }else{
+            return "{\"code\":500\",\"message\":\"false\"}";
+        }
     }
     @RequestMapping("/chat")
     public String  toChat(){
         return "chat";
+    }
+
+    @RequestMapping("/testing")
+    public String  toTesting(){
+        return "testing";
     }
 }

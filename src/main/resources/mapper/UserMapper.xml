@@ -6,6 +6,8 @@
 
     <select id="findUser" resultType="com.example.chatting_in_web.entity.LoginUser">
         select user.phone_number,user.password from user where
-        phone_number = #{phone_number} and password = #{password}
+        phone_number = #{phone_number}
     </select>
+
+
 </mapper>
