@@ -16,7 +16,10 @@ public class Chat implements WebSocketHandler {
 
     @Override
     public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
-
+        if(message.getPayloadLength() == 0){
+            return;
+        }
+        System.out.println("接收到消息："+message.getPayload().toString());
     }
 
     @Override
