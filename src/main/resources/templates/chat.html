@@ -62,12 +62,40 @@
     <div class="messages" id="messages"></div>
     <div class="input-area">
         <input type="text" id="msg-input" placeholder="输入消息">
-        <button id="send-btn">发送</button>
+        <input id="send-btn" value="发送" onclick="get()"/>
     </div>
 </div>
 
 <script>
+    let websocket;
 
+    if("WebSocket" in window) {
+        websocket = new WebSocket("ws://localhost:8080/websocket");
+    }else{
+        alert("您的浏览器不支持websocket")
+    }
+
+    websocket.onopen = function () {
+
+    }
+
+    websocket.onmessage = function (event) {
+        console.log(event.data);
+    }
+
+    websocket.onclose = function () {
+
+    }
+
+    websocket.onerror = function () {
+
+    }
+
+    function get() {
+        // const message = $("#msg-input").val();
+        const message = document.getElementById("msg-input").value;
+        websocket.send(message);
+    }
 </script>
 </body>
 </html>
