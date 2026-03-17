@@ -1,5 +1,6 @@
 package com.example.chatting_in_web.config;
 
+import com.example.chatting_in_web.controller.Chat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;

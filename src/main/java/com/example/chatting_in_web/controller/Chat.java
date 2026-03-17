@@ -1,4 +1,4 @@
-package com.example.chatting_in_web.config;
+package com.example.chatting_in_web.controller;
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
