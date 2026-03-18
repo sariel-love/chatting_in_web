@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
     <title>简易聊天窗口</title>
     <style>
         * {
@@ -59,10 +60,16 @@
 </head>
 <body>
 <div class="chat-box">
-    <div class="messages" id="messages"></div>
+    <div class="messages" id="messages">
+        <div id="chatContent" style="width:100%; height:400px; overflow-y:auto; border:1px solid #e89595; border-radius:10px; background:lightcyan;">
+            <ul id="contentUl" style="list-style-type:none; padding:0; margin:0;">
+
+            </ul>
+        </div>
+    </div>
     <div class="input-area">
         <input type="text" id="msg-input" placeholder="输入消息">
-        <input id="send-btn" value="发送" onclick="get()"/>
+        <input type="button" id="send-btn" value="发送" onclick="get()"/>
     </div>
 </div>
 
@@ -94,7 +101,20 @@
     function get() {
         // const message = $("#msg-input").val();
         const message = document.getElementById("msg-input").value;
-        websocket.send(message);
+        if (message === ""){
+            alert("请输入内容");
+            return;
+        }else{
+            $("#contentUl").append(
+                "<li style='clear:both; padding: 10px;'>" +
+                "<span style='display:block; margin:10px 0; padding:10px; background:#5be095; border-radius:10px; max-width:60%; word-break: break-all; float:right;'>" +
+                "<em></em> " + message +
+                "</span>" +
+                "</li>"
+            );
+            websocket.send(message);
+            $("#msg-input").val("");
+        }
     }
 </script>
 </body>
