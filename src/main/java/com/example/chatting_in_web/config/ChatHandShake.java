@@ -20,7 +20,7 @@ public class ChatHandShake implements HandshakeInterceptor {
         if(session.getAttribute("LoginUser") != null){
             attributes.put("LoginUser",session.getAttribute("LoginUser"));
         }else{
-            return true;//////////////session空！！！！！！！
+            return false;
         }
         return true;
     }
