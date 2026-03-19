@@ -74,6 +74,22 @@
 </div>
 
 <script>
+
+    const username = getCookie("username");
+    console.log(username);
+    function getCookie(Cname){
+        const name = Cname + "=";
+        const ca = document.cookie.split(";");
+        for(var i=0;i<ca.length;i++) {
+            var c = ca[i].trim();
+
+            if(c.indexOf(name) == 0){
+                return c.substring(name.length,c.length);
+            }
+        }
+    }
+
+
     let websocket;
 
     if("WebSocket" in window) {
@@ -87,7 +103,17 @@
     }
 
     websocket.onmessage = function (event) {
-        console.log(event.data);
+        const data = JSON.parse(event.data);
+        console.log(data);
+        if (data.username != username){
+            $("#contentUl").append(
+                "<li style='clear:both; padding: 10px;'>" +
+                "<span style='display:block; margin:10px 0; padding:10px; background:#5be095; border-radius:10px; max-width:60%; word-break: break-all; float:left;'>" +
+                "<em>"+data.username+":</em> " + data.message +
+                "</span>" +
+                "</li>"
+            );
+        }
     }
 
     websocket.onclose = function () {
@@ -105,14 +131,18 @@
             alert("请输入内容");
             return;
         }else{
-            $("#contentUl").append(
-                "<li style='clear:both; padding: 10px;'>" +
-                "<span style='display:block; margin:10px 0; padding:10px; background:#5be095; border-radius:10px; max-width:60%; word-break: break-all; float:right;'>" +
-                "<em></em> " + message +
-                "</span>" +
-                "</li>"
+                const data = {};
+                data["message"] = message;
+                data["username"] = username;
+                $("#contentUl").append(
+                    "<li style='clear:both; padding: 10px;'>" +
+                    "<span style='display:block; margin:10px 0; padding:10px; background:#5be095; border-radius:10px; max-width:60%; word-break: break-all; float:right;'>" +
+                    "<em></em> " + data.message +
+                    "</span>" +
+                    "</li>"
             );
-            websocket.send(message);
+            console.log(data.username);
+            websocket.send(JSON.stringify(data));
             $("#msg-input").val("");
         }
     }

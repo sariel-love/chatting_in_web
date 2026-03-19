@@ -12,5 +12,6 @@ import java.util.List;
 @Mapper
 public interface UserDao {
 
-    List<LoginUser> findUser(@Param("phone_number") String phone_number, @Param("password") String password);
+    List<LoginUser> findUser(@Param("phone_number") String phone_number);
+    String findUsername(String phone_number);
 }

@@ -15,8 +15,9 @@ public class UserService {
 
     @Autowired
     private UserDao userDao;
+
     public String FindUser_forLogin(String phone_number,String password){
-        List<LoginUser> User_forLogin = userDao.findUser(phone_number,password);
+        List<LoginUser> User_forLogin = userDao.findUser(phone_number);
         if(User_forLogin == null){
             return "This user is not existing";
         }
@@ -26,5 +27,12 @@ public class UserService {
         return "welcome logining";
     }
 
+    public String FindUserName(String phone_number){
+        String username = userDao.findUsername(phone_number);
+        if(username != null){
+            return username;
+        }
+        return "000";
+    }
 
 }

@@ -5,9 +5,12 @@
 <mapper namespace="com.example.chatting_in_web.dao.UserDao">
 
     <select id="findUser" resultType="com.example.chatting_in_web.entity.LoginUser">
-        select user.phone_number,user.password from user where
+        select user.username,user.phone_number,user.password from user where
         phone_number = #{phone_number}
     </select>
 
-
+    <select id="findUsername" parameterType="java.lang.String" resultType="java.lang.String">
+        select user.username from user where
+        phone_number = #{phone_number}
+    </select>
 </mapper>

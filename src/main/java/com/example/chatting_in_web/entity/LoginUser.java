@@ -1,15 +1,25 @@
 package com.example.chatting_in_web.entity;
 
 public class LoginUser {
+    private String username;
     private String phone_number;
     private String password;
 
     @Override
     public String toString() {
         return "LoginUser{" +
-                "phone_number='" + phone_number + '\'' +
+                "username='" + username + '\'' +
+                ", phone_number='" + phone_number + '\'' +
                 ", password='" + password + '\'' +
                 '}';
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getPhone_number() {
