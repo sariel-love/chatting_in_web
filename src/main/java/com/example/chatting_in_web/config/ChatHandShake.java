@@ -17,8 +17,9 @@ public class ChatHandShake implements HandshakeInterceptor {
                                    WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
         ServletServerHttpRequest req = (ServletServerHttpRequest) request;
         HttpSession session = req.getServletRequest().getSession();
-        if(session.getAttribute("LoginUser") != null){
-            attributes.put("LoginUser",session.getAttribute("LoginUser"));
+
+        if(session.getAttribute("loginUser") != null){
+            attributes.put("loginUser",session.getAttribute("loginUser"));
         }else{
             return false;
         }
