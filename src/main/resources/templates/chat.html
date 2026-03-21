@@ -74,7 +74,7 @@
 </div>
 
 <script>
-
+    const sendByBtn = document.getElementById("msg-input");
     const username = getCookie("username");
     console.log(username);
     function getCookie(Cname){
@@ -107,9 +107,10 @@
         console.log(data);
         if (data.username != username){
             $("#contentUl").append(
-                "<li style='clear:both; padding: 10px;'>" +
-                "<span style='display:block; margin:10px 0; padding:10px; background:#5be095; border-radius:10px; max-width:60%; word-break: break-all; float:left;'>" +
-                "<em>"+data.username+":</em> " + data.message +
+                "<li style='clear:both; padding: 15px 10px 10px 10px; position: relative;'>" +
+                "<em style='position: absolute; top: 1px; left: 16px; font-size: 0.33em; font-style: normal;'>" + data.username + "</em>" +
+                "<span style='display:block; margin:5px 5px 5px 5px; padding:0px 5px 5px 5px; background:#5be095; border-radius:10px; max-width:60%; word-break: break-all; float:left;'>" +
+                "<span style='display: block;'>" + data.message + "</span>" +
                 "</span>" +
                 "</li>"
             );
@@ -135,17 +136,22 @@
                 data["message"] = message;
                 data["username"] = username;
                 $("#contentUl").append(
-                    "<li style='clear:both; padding: 10px;'>" +
-                    "<span style='display:block; margin:10px 0; padding:10px; background:#5be095; border-radius:10px; max-width:60%; word-break: break-all; float:right;'>" +
-                    "<em></em> " + data.message +
+                    "<li style='clear:both; padding: 15px 10px 10px 10px; position: relative;'>" +
+                    "<span style='display:block; margin:5px 5px 5px 5px; padding:0px 5px 5px 5px; background:#5be095; border-radius:10px; max-width:60%; word-break: break-all; float:right;'>" +
+                    "<span style='display: block;'>" + data.message + "</span>" +
                     "</span>" +
                     "</li>"
-            );
+                 );
             console.log(data.username);
             websocket.send(JSON.stringify(data));
-            $("#msg-input").val("");
+            document.getElementById("msg-input").value = "";
         }
     }
+    sendByBtn.addEventListener("keydown",(event)=>{
+        if(event.key === "Enter"){
+            get();
+        }
+    });
 </script>
 </body>
 </html>
