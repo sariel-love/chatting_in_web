@@ -17,7 +17,7 @@ public class AiUtil {
                 .method("POST", body)
                 .addHeader("Content-Type", "application/json")
                 .addHeader("Accept", "application/json")
-                .addHeader("Authorization", "Bearer sk-d84d57ff3622478fbf91dd06f5d6f569")
+                .addHeader("Authorization", "Bearer ")
                 .build();
         Response response = client.newCall(request).execute();
         System.out.println(response.body().string());
