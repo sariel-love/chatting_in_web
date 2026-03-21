@@ -1,4 +1,4 @@
-package com.example.chatting_in_web.controller;
+package com.example.chatting_in_web.config;
 
 import com.example.chatting_in_web.entity.LoginUser;
 import org.springframework.stereotype.Component;
@@ -33,7 +33,7 @@ public class Chat implements WebSocketHandler {
         sendMessageToAll(message);
 
     }
-
+//群发
     public void sendMessageToAll( WebSocketMessage<?> message) throws IOException {
         for(Map.Entry<String,WebSocketSession> entry :USERS.entrySet()){
             WebSocketSession webSocketSession = entry.getValue();
@@ -42,6 +42,7 @@ public class Chat implements WebSocketHandler {
             }
         }
     }
+//私发
 
 
 
