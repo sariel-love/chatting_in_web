@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
-    <title>简易聊天窗口</title>
+    <title>aichat</title>
     <style>
         * {
             margin: 0;
@@ -132,17 +132,17 @@
             alert("请输入内容");
             return;
         }else{
-                const data = {};
-                data["message"] = message;
-                data["toUser"] = "all";
-                data["username"] = username;
-                $("#contentUl").append(
-                    "<li style='clear:both; padding: 15px 10px 10px 10px; position: relative;'>" +
-                    "<span style='display:block; margin:5px 5px 5px 5px; padding:0px 5px 5px 5px; background:#5be095; border-radius:10px; max-width:60%; word-break: break-all; float:right;'>" +
-                    "<span style='display: block;'>" + data.message + "</span>" +
-                    "</span>" +
-                    "</li>"
-                 );
+            const data = {};
+            data["message"] = message;
+            data["toUser"] = "ai"
+            data["username"] = username;
+            $("#contentUl").append(
+                "<li style='clear:both; padding: 15px 10px 10px 10px; position: relative;'>" +
+                "<span style='display:block; margin:5px 5px 5px 5px; padding:0px 5px 5px 5px; background:#5be095; border-radius:10px; max-width:60%; word-break: break-all; float:right;'>" +
+                "<span style='display: block;'>" + data.message + "</span>" +
+                "</span>" +
+                "</li>"
+            );
             console.log(data.username);
             websocket.send(JSON.stringify(data));
             document.getElementById("msg-input").value = "";

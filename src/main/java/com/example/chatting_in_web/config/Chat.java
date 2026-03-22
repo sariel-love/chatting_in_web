@@ -19,8 +19,12 @@ public class Chat implements WebSocketHandler {
         if (loginUser == null) {
             session.sendMessage(new TextMessage("用户未登录，无法发送消息"));
             return;
+        }else{
+            USERS.put(loginUser.getUsername(),session);
         }
-        USERS.put(loginUser.getUsername(),session);
+        if(session.getAttributes().get("AiUser") != null){
+            USERS.put("AiUser",session);
+        }
     }
 
     @Override
@@ -29,6 +33,11 @@ public class Chat implements WebSocketHandler {
             return;
         }
         System.out.println("接收到消息："+message.getPayload().toString());
+
+
+
+
+
 
         sendMessageToAll(message);
 

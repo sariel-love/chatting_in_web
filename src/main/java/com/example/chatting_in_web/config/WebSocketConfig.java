@@ -16,9 +16,12 @@ public class WebSocketConfig implements WebSocketConfigurer {
     @Autowired
     private ChatHandShake chatHandShake;
 
+    @Autowired
+    private AiChatHandShake aiChatHandShake;
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         registry.addHandler(chat,"/websocket").addInterceptors(chatHandShake);
+        registry.addHandler(chat,"/ai").addInterceptors(aiChatHandShake);
     }
 }
