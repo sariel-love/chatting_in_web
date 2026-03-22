@@ -2,9 +2,11 @@ package com.example.chatting_in_web.service.impl;
 
 import com.example.chatting_in_web.service.AiService;
 import okhttp3.*;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 
+@Service
 public class AiServiceImpl implements AiService {
     public String AiChat(String message){
         String data = "";
@@ -25,7 +27,7 @@ public class AiServiceImpl implements AiService {
                     .method("POST", body)
                     .addHeader("Content-Type", "application/json")
                     .addHeader("Accept", "application/json")
-                    .addHeader("Authorization", "Bearer sk-d84d57ff3622478fbf91dd06f5d6f569")
+                    .addHeader("Authorization", "Bearer ")
                     .build();
             Response response = client.newCall(request).execute();
             data = response.body().string();
