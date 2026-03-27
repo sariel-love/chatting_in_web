@@ -18,12 +18,13 @@ public class AiChatHandShake implements HandshakeInterceptor {
     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
         ServletServerHttpRequest rep = (ServletServerHttpRequest) request;
         HttpSession session = rep.getServletRequest().getSession();
-        if(session.getAttribute("LoginUser") != null){
+        if(session.getAttribute("loginUser") != null){
             LoginUser AiUser = new LoginUser();
             AiUser.setUsername("ai");
             attributes.put("AiUser",AiUser);
             attributes.put("LoginUser",session.getAttribute("LoginUser"));
-            return true;
+        }else {
+            return false;
         }
         return true;
     }
