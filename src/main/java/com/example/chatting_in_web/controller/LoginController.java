@@ -56,6 +56,11 @@ public class LoginController {
         return "chat";
     }
 
+    @RequestMapping("/aichat")
+    public String  toAiChat(){
+        return "aichat";
+    }
+
     @RequestMapping("/testing")
     public String  toTesting(){
         return "testing";

@@ -27,7 +27,7 @@ public class AiServiceImpl implements AiService {
                     .method("POST", body)
                     .addHeader("Content-Type", "application/json")
                     .addHeader("Accept", "application/json")
-                    .addHeader("Authorization", "Bearer ")
+                    .addHeader("Authorization", "Bearer sk-d84d57ff3622478fbf91dd06f5d6f569")
                     .build();
             Response response = client.newCall(request).execute();
             data = response.body().string();

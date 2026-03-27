@@ -25,7 +25,7 @@ public class AiChatHandShake implements HandshakeInterceptor {
             attributes.put("LoginUser",session.getAttribute("LoginUser"));
             return true;
         }
-        return false;
+        return true;
     }
 
     @Override

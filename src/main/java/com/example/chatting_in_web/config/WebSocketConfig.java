@@ -22,6 +22,6 @@ public class WebSocketConfig implements WebSocketConfigurer {
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         registry.addHandler(chat,"/websocket").addInterceptors(chatHandShake);
-        registry.addHandler(chat,"/ai").addInterceptors(aiChatHandShake);
+        registry.addHandler(chat,"/aiChat").addInterceptors(aiChatHandShake);
     }
 }
