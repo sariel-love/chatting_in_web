@@ -43,19 +43,20 @@ public class Chat implements WebSocketHandler {
         }
         System.out.println("接收到消息：" + message.getPayload().toString());
         Message msg = GsonUtil.fromJson(message.getPayload().toString(), Message.class);//因发送方的发送的数据二进制的码，需要将二进制的码转化成字符串
-            String data = aiService.AiChat(msg.getMessage());
-            System.out.println(data);
-            JSONObject jsonObject = new JSONObject(data);
-            JSONArray choices = jsonObject.getJSONArray("choices");
-            JSONObject firstChoice = choices.getJSONObject(0);
-            String content = firstChoice.getJSONObject("message").getString("content");
-            System.out.println("ai说：" + content);
-            msg.setMessage(content);
-            msg.setUsername("deepseek");
-            sendMessageToUser(session, new TextMessage(GsonUtil.toJsonStringIgnoreNull(msg)));
-
-
-//            sendMessageToAll(message);
+        System.out.println(msg);
+        if(msg.getToUser().equals("ai")) {
+                String data = aiService.AiChat(msg.getMessage());
+                System.out.println(data);
+                JSONObject jsonObject = new JSONObject(data);
+                JSONArray choices = jsonObject.getJSONArray("choices");
+                JSONObject firstChoice = choices.getJSONObject(0);
+                String content = firstChoice.getJSONObject("message").getString("content");
+                System.out.println("ai说：" + content);
+                msg.setMessage(content);
+                msg.setUsername("deepseek");
+                sendMessageToUser(session, new TextMessage(GsonUtil.toJsonStringIgnoreNull(msg)));
+            }else if(msg.getToUser().equals("all"))
+                sendMessageToAll(message);
 
     }
 //群发
