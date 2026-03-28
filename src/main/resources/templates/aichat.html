@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
-    <title>简易聊天窗口</title>
+    <title>聊天窗口</title>
     <style>
         * {
             margin: 0;
@@ -90,19 +90,30 @@
         #send-btn:hover {
             background-color: #0073e6;
         }
+        a{
+            text-decoration: none;
+            font-size: 20px;
+            color: #3f3d3d;
+        }
+        a:hover{
+            color: whitesmoke;
+        }
+        .item{
+            background-color: #3399ff;
+        }
     </style>
 </head>
 <body>
 <div class="chat-box">
     <div class="list-box">
-        <div class="item">列表项 1</div>
-        <div class="item">列表项 2</div>
-        <div class="item">列表项 3</div>
-        <div class="item">列表项 4</div>
-        <div class="item">列表项 5</div>
-        <div class="item">列表项 6</div>
-        <div class="item">列表项 7</div>
-        <div class="item">列表项 8</div>
+        <div class="item"><a href="/login/chat">all</a></div>
+        <div class="item"><a >deepseek</a></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
+        <div class="item"></div>
     </div>
     <div class="chatting">
         <div class="messages" id="messages">
