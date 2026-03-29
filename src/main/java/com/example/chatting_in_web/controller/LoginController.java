@@ -65,4 +65,9 @@ public class LoginController {
     public String  toTesting(){
         return "testing";
     }
+
+    @RequestMapping("/register")
+    public String  toRegister(){
+        return "register";
+    }
 }

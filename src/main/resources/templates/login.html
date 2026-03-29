@@ -91,6 +91,15 @@
             background-color: #a0cfff;
             cursor: not-allowed;
         }
+        a{
+            float: right;
+            text-decoration: none;
+            color:black;
+            font-size: 13px;
+        }
+        a:hover{
+            color: #3399ff;
+        }
     </style>
 </head>
 <body>
@@ -107,7 +116,8 @@
             <input type="password" id="password" placeholder="请输入6-16位密码">
             <div class="error-tip" id="pwdError">密码长度需在6-16位之间</div>
         </div>
-        <button type="submit" class="login-btn" id="submitBtn" onclick="login()">登录</button>
+        <button type="submit" class="login-btn" id="submitBtn" onclick="login()">登录</button><br><br>
+        <a href="/login/register">新用户注册</a>
     </form>
 </div>
 
