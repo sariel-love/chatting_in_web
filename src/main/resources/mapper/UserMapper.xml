@@ -11,6 +11,12 @@
 
     <select id="findUsername" parameterType="java.lang.String" resultType="java.lang.String">
         select user.username from user where
-        phone_number = #{phone_number}
+            phone_number = #{phone_number}
     </select>
+
+    <insert id="addUser" parameterType="com.example.chatting_in_web.entity.User">
+        insert into user (username,sex,phone_number,email,password) value (
+            #{username},#{sex},#{phone_number},#{email},#{password}
+        )
+    </insert>
 </mapper>

@@ -18,7 +18,7 @@ public class UserService {
 
     public String FindUser_forLogin(String phone_number,String password){
         List<LoginUser> User_forLogin = userDao.findUser(phone_number);
-        if(User_forLogin == null){
+        if(User_forLogin.isEmpty()){
             return "This user is not existing";
         }
         if(!password.equals( User_forLogin.get(0).getPassword())){
@@ -27,12 +27,25 @@ public class UserService {
         return "welcome logining";
     }
 
-    public String FindUserName(String phone_number){
+    public String FindUserName(String phone_number) {
         String username = userDao.findUsername(phone_number);
-        if(username != null){
+        if (username != null) {
             return username;
         }
         return "000";
     }
 
+    public int Add_User(User user){
+        List<LoginUser> User_forLogin = userDao.findUser(user.getPhone_number());
+        System.out.println(User_forLogin);
+        if(!User_forLogin.isEmpty()){
+            return 2;
+        }
+        Integer addUser = userDao.addUser(user);
+        System.out.println(addUser+"?????????????????????????????????");
+        if (addUser == 0){
+            return 0;
+        }
+        return 1;
+    }
 }

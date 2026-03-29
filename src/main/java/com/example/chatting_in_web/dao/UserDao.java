@@ -14,4 +14,5 @@ public interface UserDao {
 
     List<LoginUser> findUser(@Param("phone_number") String phone_number);
     String findUsername(String phone_number);
+    Integer addUser(User user);
 }
