@@ -10,6 +10,7 @@
     MySQL
     Maven
     WebSocket
+    Thymeleaf
 功能：
     私聊
     与ai聊天：
