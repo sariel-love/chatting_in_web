@@ -20,7 +20,6 @@
             display: flex;
             overflow: hidden;
         }
-        /* 左侧列表 */
         .list-box {
             width: 200px;
             height: 100%;
@@ -40,7 +39,6 @@
             border-bottom: none;
         }
 
-        /* 右侧聊天区域 */
         .chatting{
             flex: 1;
             display: flex;
@@ -65,7 +63,6 @@
             list-style: none;
         }
 
-        /* 输入框区域 */
         .input-area {
             display: flex;
             padding: 10px;
@@ -123,6 +120,7 @@
         <div class="input-area">
             <input type="text" id="msg-input" placeholder="输入消息">
             <input type="button" id="send-btn" value="发送" onclick="get()">
+            <button onclick="clearChat()" style="padding: 8px 10px;">清空记录</button>
         </div>
     </div>
 </div>
@@ -131,35 +129,84 @@
     const sendByBtn = document.getElementById("msg-input");
     const username = getCookie("username");
     console.log(username);
+
     function getCookie(Cname){
         const name = Cname + "=";
         const ca = document.cookie.split(";");
         for(var i=0;i<ca.length;i++) {
             var c = ca[i].trim();
-
             if(c.indexOf(name) == 0){
                 return c.substring(name.length,c.length);
             }
         }
+        return "";
     }
+
+    // ===================== 新增：本地存储聊天记录 =====================
+    // 保存单条消息
+    function saveMessage(msg) {
+        let history = JSON.parse(localStorage.getItem("chatHistory") || "[]");
+        history.push(msg);
+        if (history.length > 300) history = history.slice(-300);
+        localStorage.setItem("chatHistory", JSON.stringify(history));
+    }
+
+    // 加载历史记录
+    function loadHistory() {
+        let history = JSON.parse(localStorage.getItem("chatHistory") || "[]");
+        $("#contentUl").empty();
+        history.forEach(item => {
+            if (item.username === username) {
+                $("#contentUl").append(
+                    `<li style='clear:both; padding:15px 10px 10px; position:relative;'>
+                        <span style='display:block; margin:5px; padding:5px; background:#5be095; border-radius:10px; max-width:60%; word-break:break-all; float:right;'>
+                            <span>${item.message}</span>
+                        </span>
+                    </li>`
+                );
+            } else {
+                $("#contentUl").append(
+                    `<li style='clear:both; padding:15px 10px 10px; position:relative;'>
+                        <em style='position:absolute; top:1px; left:16px; font-size:0.33em; font-style:normal;'>${item.username}</em>
+                        <span style='display:block; margin:5px; padding:5px; background:#5be095; border-radius:10px; max-width:60%; word-break:break-all; float:left;'>
+                            <span>${item.message}</span>
+                        </span>
+                    </li>`
+                );
+            }
+        });
+        scrollToBottom();
+    }
+
+    // 自动滚动到底
+    function scrollToBottom() {
+        const chat = document.getElementById("chatContent");
+        chat.scrollTop = chat.scrollHeight;
+    }
+
+    // 清空聊天记录
+    function clearChat() {
+        localStorage.removeItem("chatHistory");
+        $("#contentUl").empty();
+    }
+
+    // 页面加载时自动读取历史
+    window.onload = loadHistory;
+    // ===================================================================
 
 
     let websocket;
-
     if("WebSocket" in window) {
         websocket = new WebSocket("ws://localhost:8080/websocket");
     }else{
         alert("您的浏览器不支持websocket")
     }
 
-    websocket.onopen = function () {
-
-    }
+    websocket.onopen = function () {}
 
     websocket.onmessage = function (event) {
         const data = JSON.parse(event.data);
-        console.log(data);
-        if (data.username != username){
+        if (data.username !== username){
             $("#contentUl").append(
                 "<li style='clear:both; padding: 15px 10px 10px 10px; position: relative;'>" +
                 "<em style='position: absolute; top: 1px; left: 16px; font-size: 0.33em; font-style: normal;'>" + data.username + "</em>" +
@@ -168,40 +215,43 @@
                 "</span>" +
                 "</li>"
             );
+            // 保存他人消息
+            saveMessage({ username: data.username, message: data.message});
+            scrollToBottom();
         }
     }
 
-    websocket.onclose = function () {
-
-    }
-
-    websocket.onerror = function () {
-
-    }
+    websocket.onclose = function () {}
+    websocket.onerror = function () {}
 
     function get() {
-        // const message = $("#msg-input").val();
-        const message = document.getElementById("msg-input").value;
+        const message = document.getElementById("msg-input").value.trim();
         if (message === ""){
             alert("请输入内容");
             return;
-        }else{
-            const data = {};
-            data["message"] = message;
-            data["toUser"] = "all"
-            data["username"] = username;
-            $("#contentUl").append(
-                "<li style='clear:both; padding: 15px 10px 10px 10px; position: relative;'>" +
-                "<span style='display:block; margin:5px 5px 5px 5px; padding:0px 5px 5px 5px; background:#5be095; border-radius:10px; max-width:60%; word-break: break-all; float:right;'>" +
-                "<span style='display: block;'>" + data.message + "</span>" +
-                "</span>" +
-                "</li>"
-            );
-            console.log(data.username);
-            websocket.send(JSON.stringify(data));
-            document.getElementById("msg-input").value = "";
         }
+        const data = {};
+        data["message"] = message;
+        data["toUser"] = "all"
+        data["username"] = username;
+
+        // 显示自己的消息
+        $("#contentUl").append(
+            "<li style='clear:both; padding: 15px 10px 10px 10px; position: relative;'>" +
+            "<span style='display:block; margin:5px 5px 5px 5px; padding:0px 5px 5px 5px; background:#5be095; border-radius:10px; max-width:60%; word-break: break-all; float:right;'>" +
+            "<span style='display: block;'>" + data.message + "</span>" +
+            "</span>" +
+            "</li>"
+        );
+
+        // 保存自己的消息
+        saveMessage({ message: data.message, username: data.username });
+
+        websocket.send(JSON.stringify(data));
+        document.getElementById("msg-input").value = "";
+        scrollToBottom();
     }
+
     sendByBtn.addEventListener("keydown",(event)=>{
         if(event.key === "Enter"){
             get();
