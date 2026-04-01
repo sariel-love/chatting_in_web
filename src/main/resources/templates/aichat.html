@@ -157,23 +157,25 @@
         let history = JSON.parse(localStorage.getItem("chatHistory") || "[]");
         $("#contentUl").empty();
         history.forEach(item => {
-            if (item.username === username) {
-                $("#contentUl").append(
-                    `<li style='clear:both; padding:15px 10px 10px; position:relative;'>
+            if (item.toUser === "ai") {
+                if (item.username === username) {
+                    $("#contentUl").append(
+                        `<li style='clear:both; padding:15px 10px 10px; position:relative;'>
                         <span style='display:block; margin:5px; padding:5px; background:#5be095; border-radius:10px; max-width:60%; word-break:break-all; float:right;'>
                             <span>${item.message}</span>
                         </span>
                     </li>`
-                );
-            } else {
-                $("#contentUl").append(
-                    `<li style='clear:both; padding:15px 10px 10px; position:relative;'>
+                    );
+                } else {
+                    $("#contentUl").append(
+                        `<li style='clear:both; padding:15px 10px 10px; position:relative;'>
                         <em style='position:absolute; top:1px; left:16px; font-size:0.33em; font-style:normal;'>${item.username}</em>
                         <span style='display:block; margin:5px; padding:5px; background:#5be095; border-radius:10px; max-width:60%; word-break:break-all; float:left;'>
                             <span>${item.message}</span>
                         </span>
                     </li>`
-                );
+                    );
+                }
             }
         });
         scrollToBottom();
@@ -221,7 +223,7 @@
                 "</li>"
             );
             // 保存他人消息
-            saveMessage({ username: data.username, message: data.message});
+            saveMessage({ username: data.username, message: data.message,toUser:data.toUser});
             scrollToBottom();
         }
     }
@@ -252,7 +254,7 @@
                 "</span>" +
                 "</li>"
             );
-            saveMessage({ message: data.message, username: data.username });
+            saveMessage({ message: data.message, username: data.username ,toUser:data.toUser});
 
             websocket.send(JSON.stringify(data));
             document.getElementById("msg-input").value = "";

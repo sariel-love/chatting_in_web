@@ -4,6 +4,7 @@ import com.example.chatting_in_web.entity.LoginUser;
 import com.example.chatting_in_web.entity.Message;
 import com.example.chatting_in_web.service.AiService;
 import com.example.chatting_in_web.util.GsonUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
+@Slf4j
 public class Chat implements WebSocketHandler {
 
     public static final Map<String,WebSocketSession> USERS = new HashMap<>();
@@ -24,11 +26,12 @@ public class Chat implements WebSocketHandler {
         LoginUser loginUser = (LoginUser) session.getAttributes().get("loginUser");
         if(loginUser != null) {
             USERS.put(loginUser.getUsername(), session);
+            log.info("用户{}{}加入在线用户列表",loginUser.getUsername(),loginUser.getPhone_number());
         }
         if(session.getAttributes().get("AiUser") != null){
             USERS.put("AiUser",session);
+            log.info("ai加入在线用户列表");
         }
-        System.out.println("MMMMMMMMMMMMMMM");
     }
 
     
@@ -41,9 +44,8 @@ public class Chat implements WebSocketHandler {
         if (message.getPayloadLength() == 0) {
             return;
         }
-        System.out.println("接收到消息：" + message.getPayload().toString());
         Message msg = GsonUtil.fromJson(message.getPayload().toString(), Message.class);//因发送方的发送的数据二进制的码，需要将二进制的码转化成字符串
-        System.out.println(msg);
+        log.info("用户{}发送了消息：{}",msg.getUsername(),msg.getMessage());
         if(msg.getToUser().equals("ai")) {
                 String data = aiService.AiChat(msg.getMessage());
                 System.out.println(data);
@@ -54,6 +56,7 @@ public class Chat implements WebSocketHandler {
                 System.out.println("ai说：" + content);
                 msg.setMessage(content);
                 msg.setUsername("deepseek");
+                msg.setToUser("ai");
                 sendMessageToUser(session, new TextMessage(GsonUtil.toJsonStringIgnoreNull(msg)));
             }else if(msg.getToUser().equals("all"))
                 sendMessageToAll(message);
