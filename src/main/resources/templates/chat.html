@@ -4,146 +4,385 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
-    <title>聊天窗口</title>
+    <title>仿微信聊天窗口</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: sans-serif;
+            font-family: "Microsoft Yahei", sans-serif;
         }
-        .chat-box {
-            width: 800px;
-            height: 500px;
-            margin: 20px auto;
-            border: 1px solid #ccc;
+
+        body {
+            background-color: #f0f2f5;
             display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* 主容器 */
+        .wechat-container {
+            width: 1200px;
+            height: 800px;
+            background-color: #fff;
+            display: flex;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             overflow: hidden;
         }
-        .list-box {
-            width: 200px;
-            height: 100%;
-            border-right: 1px solid #ccc;
+
+        /* 左侧侧边栏 */
+        .sidebar-left {
+            width: 60px;
+            background-color: #f5f5f5;
             display: flex;
             flex-direction: column;
-        }
-        .list-box .item {
-            flex: 1;
-            display: flex;
             align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            border-bottom: 1px solid #eee;
-        }
-        .list-box .item:last-child {
-            border-bottom: none;
+            padding: 10px 0;
+            border-right: 1px solid #e5e5e5;
         }
 
-        .chatting{
-            flex: 1;
+        .sidebar-item {
+            width: 40px;
+            height: 40px;
+            margin: 10px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 4px;
+            cursor: pointer;
+            position: relative;
+            color: #555;
+            font-size: 20px;
+        }
+
+        .sidebar-item:hover {
+            background-color: #e5e5e5;
+        }
+
+        /* 聊天列表区域 */
+        .chat-list {
+            width: 280px;
+            background-color: #f5f5f5;
+            border-right: 1px solid #e5e5e5;
             display: flex;
             flex-direction: column;
         }
-        .messages {
-            flex: 1;
-            padding: 10px;
-            overflow-y: auto;
-            background: #fdfdfd;
-        }
-        #chatContent{
-            width: 100%;
-            height: 100%;
-            padding: 10px;
-            background: #f8fbfc;
-            border-radius: 6px;
-            border: 1px solid #e0e0e0;
-            overflow-y: auto;
-        }
-        #contentUl{
-            list-style: none;
+
+        /* 搜索栏 */
+        .search-bar {
+            padding: 15px;
+            background-color: #f5f5f5;
+            border-bottom: 1px solid #e5e5e5;
         }
 
-        .input-area {
-            display: flex;
-            padding: 10px;
-            gap: 8px;
-            border-top: 1px solid #eee;
-        }
-        #msg-input {
-            flex: 1;
-            padding: 8px 10px;
-            border: 1px solid #ddd;
+        .search-input {
+            width: 100%;
+            height: 36px;
             border-radius: 4px;
+            border: none;
+            background-color: #fff;
+            padding: 0 10px 0 30px;
+            font-size: 14px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'%3E%3C/circle%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'%3E%3C/line%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: 8px center;
+        }
+
+        .search-input:focus {
             outline: none;
         }
-        #send-btn {
-            padding: 8px 16px;
-            background-color: #0084ff;
-            color: white;
+
+        /* 聊天列表项 */
+        .chat-items {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .chat-item {
+            padding: 12px 15px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .chat-item:hover {
+            background-color: #e5e5e5;
+        }
+
+        .chat-item.active {
+            background-color: #07c160;
+            color: #fff;
+        }
+
+        .chat-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 4px;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+
+        .chat-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .chat-name {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .chat-lastmsg {
+            font-size: 14px;
+            color: #999;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .chat-item.active .chat-lastmsg {
+            color: #fff;
+            opacity: 0.8;
+        }
+
+        /* 右侧聊天区域 */
+        .chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: #f5f5f5;
+        }
+
+        /* 聊天头部 */
+        .chat-header {
+            height: 60px;
+            border-bottom: 1px solid #e5e5e5;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            background-color: #fff;
+        }
+
+        .chat-title {
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .chat-actions {
+            display: flex;
+            gap: 20px;
+            color: #555;
+            font-size: 20px;
+        }
+
+        .action-item {
+            cursor: pointer;
+        }
+
+        /* 消息列表 */
+        .message-list {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background-color: #f5f5f5;
+        }
+
+        .message-item {
+            display: flex;
+            margin-bottom: 20px;
+            max-width: 70%;
+        }
+
+        .message-item.self {
+            flex-direction: row-reverse;
+            margin-left: auto;
+        }
+
+        .msg-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 4px;
+            flex-shrink: 0;
+        }
+
+        .msg-content {
+            margin: 0 12px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .msg-bubble {
+            background-color: #fff;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 16px;
+            line-height: 1.5;
+            position: relative;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .message-item.self .msg-bubble {
+            background-color: #95ec69;
+        }
+
+        .msg-sender {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 4px;
+            text-align: right !important;
+            width: 100%;
+        }
+        .msg-sender_{
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 4px;
+            text-align: left !important;
+            width: 100%;
+        }
+        /* 输入框区域 */
+        .input-area {
+            height: 120px;
+            border-top: 1px solid #e5e5e5;
+            background-color: #fff;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .msg-input {
+            flex: 1;
+            border: none;
+            padding: 10px 15px;
+            font-size: 16px;
+            resize: none;
+            outline: none;
+        }
+
+        .btn-group {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin: 0 15px 10px 0;
+        }
+
+        .send-btn, .clear-btn {
+            padding: 6px 16px;
+            background-color: #07c160;
+            color: #fff;
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            font-size: 14px;
         }
-        #send-btn:hover {
-            background-color: #0073e6;
+
+        .clear-btn {
+            background-color: #cccccc;
         }
-        a{
+
+        .send-btn:hover {
+            background-color: #06ae56;
+        }
+
+        .clear-btn:hover {
+            background-color: #bbbbbb;
+        }
+
+        a {
             text-decoration: none;
-            font-size: 20px;
-        }
-        a:hover{
-            color: whitesmoke;
-        }
-        .item{
-            background-color: #3399ff;
+            color: inherit;
         }
     </style>
 </head>
 <body>
-<div class="chat-box">
-    <div class="list-box">
-        <div class="item"><a>all</a></div>
-        <div class="item"><a href = "/login/aichat">deepseek</a></div>
-        <div class="item"></div>
-        <div class="item"></div>
-        <div class="item"></div>
-        <div class="item"></div>
-        <div class="item"></div>
-        <div class="item"></div>
+<div class="wechat-container">
+    <!-- 左侧侧边栏 -->
+    <div class="sidebar-left">
+        <div class="sidebar-item" style="background-color: #07c160; color: #fff;">💬</div>
+        <div class="sidebar-item"></div>
+        <div class="sidebar-item"></div>
+        <div class="sidebar-item"></div>
+        <div class="sidebar-item"></div>
+        <div class="sidebar-item"></div>
+        <div class="sidebar-item"></div>
+        <div class="sidebar-item"></div>
+        <div class="sidebar-item"></div>
+        <div class="sidebar-item" style="margin-top: auto;">☰</div>
     </div>
-    <div class="chatting">
-        <div class="messages" id="messages">
-            <div id="chatContent">
-                <ul id="contentUl"></ul>
+
+    <!-- 聊天列表 -->
+    <div class="chat-list">
+        <div class="search-bar" style="position: relative;">
+            <input type="text" class="search-input" placeholder="搜索">
+        </div>
+        <div class="chat-items">
+            <div class="chat-item active">
+                <img src="https://picsum.photos/48/48?random=1" alt="群聊头像" class="chat-avatar">
+                <div class="chat-info">
+                    <div class="chat-name">全体群聊</div>
+                    <div class="chat-lastmsg">所有人可见</div>
+                </div>
+            </div>
+            <div class="chat-item">
+                <img src="https://picsum.photos/48/48?random=2" alt="AI头像" class="chat-avatar">
+                <div class="chat-info">
+                    <div class="chat-name">DeepSeek AI</div>
+                    <div class="chat-lastmsg"><a href="/login/aichat">点击对话</a></div>
+                </div>
             </div>
         </div>
+    </div>
+
+    <!-- 右侧聊天区域 -->
+    <div class="chat-area">
+        <div class="chat-header">
+            <div class="chat-title">全体群聊</div>
+            <div class="chat-actions">
+                <div class="action-item">⋯</div>
+            </div>
+        </div>
+
+        <!-- 消息列表容器 -->
+        <div class="message-list" id="message-list">
+            <ul id="contentUl" style="list-style: none; width: 100%;"></ul>
+        </div>
+
+        <!-- 输入区域 -->
         <div class="input-area">
-            <input type="text" id="msg-input" placeholder="输入消息">
-            <input type="button" id="send-btn" value="发送" onclick="get()">
-            <button onclick="clearChat()" style="padding: 8px 10px;">清空记录</button>
+            <textarea class="msg-input" id="msg-input" placeholder="输入消息..."></textarea>
+            <div class="btn-group">
+                <button class="clear-btn" onclick="clearChat()">清空记录</button>
+                <button class="send-btn" id="send-btn">发送</button>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
-    const sendByBtn = document.getElementById("msg-input");
+    // ================ 从第一个页面完整保留的业务功能 ================
     const username = getCookie("username");
-    console.log(username);
+    console.log("当前用户：", username);
 
-    function getCookie(Cname){
+    // 获取Cookie
+    function getCookie(Cname) {
         const name = Cname + "=";
         const ca = document.cookie.split(";");
-        for(var i=0;i<ca.length;i++) {
+        for (var i = 0; i < ca.length; i++) {
             var c = ca[i].trim();
-            if(c.indexOf(name) == 0){
-                return c.substring(name.length,c.length);
+            if (c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length);
             }
         }
-        return "";
+        return "游客";
     }
 
-    // ===================== 新增：本地存储聊天记录 =====================
-    // 保存单条消息
+    // 保存消息到本地
     function saveMessage(msg) {
         let history = JSON.parse(localStorage.getItem("chatHistory") || "[]");
         history.push(msg);
@@ -158,106 +397,117 @@
         history.forEach(item => {
             if (item.toUser === "all") {
                 if (item.username === username) {
-                    $("#contentUl").append(
-                        `<li style='clear:both; padding:15px 10px 10px; position:relative;'>
-                        <span style='display:block; margin:5px; padding:5px; background:#5be095; border-radius:10px; max-width:60%; word-break:break-all; float:right;'>
-                            <span>${item.message}</span>
-                        </span>
-                    </li>`
-                    );
+                    addSelfMessage(item.message);
                 } else {
-                    $("#contentUl").append(
-                        `<li style='clear:both; padding:15px 10px 10px; position:relative;'>
-                        <em style='position:absolute; top:1px; left:16px; font-size:0.33em; font-style:normal;'>${item.username}</em>
-                        <span style='display:block; margin:5px; padding:5px; background:#5be095; border-radius:10px; max-width:60%; word-break:break-all; float:left;'>
-                            <span>${item.message}</span>
-                        </span>
-                    </li>`
-                    );
+                    addOtherMessage(item.username, item.message);
                 }
             }
         });
         scrollToBottom();
     }
 
-    // 自动滚动到底
+    // 滚动到底部
     function scrollToBottom() {
-        const chat = document.getElementById("chatContent");
-        chat.scrollTop = chat.scrollHeight;
+        const list = document.getElementById("message-list");
+        list.scrollTop = list.scrollHeight;
     }
 
-    // 清空聊天记录
+    // 清空聊天
     function clearChat() {
         localStorage.removeItem("chatHistory");
         $("#contentUl").empty();
     }
 
-    // 页面加载时自动读取历史
-    window.onload = loadHistory;
-    // ===================================================================
-
-
-    let websocket;
-    if("WebSocket" in window) {
-        websocket = new WebSocket("ws://localhost:8080/websocket");
-    }else{
-        alert("您的浏览器不支持websocket")
+    // 添加自己的消息（界面渲染）
+    function addSelfMessage(text) {
+        $("#contentUl").append(`
+                <li class="message-item self">
+                    <img src="https://picsum.photos/40/40?random=11" alt="头像" class="msg-avatar">
+                    <div class="msg-content">
+                        <div class="msg-sender">${username}</div>
+                        <div class="msg-bubble">${text}</div>
+                    </div>
+                </li>
+            `);
     }
 
-    websocket.onopen = function () {}
+    // 添加他人消息（界面渲染）
+    function addOtherMessage(name, text) {
+        $("#contentUl").append(`
+                <li class="message-item">
+                    <img src="https://picsum.photos/40/40?random=10" alt="头像" class="msg-avatar">
+                    <div class="msg-content">
+                        <div class="msg-sender_">${name}</div>
+                        <div class="msg-bubble">${text}</div>
+                    </div>
+                </li>
+            `);
+    }
 
+    // WebSocket 连接
+    let websocket;
+    if ("WebSocket" in window) {
+        websocket = new WebSocket("ws://localhost:8080/websocket");
+    } else {
+        alert("您的浏览器不支持websocket");
+    }
+
+    // 收到消息
     websocket.onmessage = function (event) {
         const data = JSON.parse(event.data);
-        if (data.username !== username){
-            $("#contentUl").append(
-                "<li style='clear:both; padding: 15px 10px 10px 10px; position: relative;'>" +
-                "<em style='position: absolute; top: 1px; left: 16px; font-size: 0.33em; font-style: normal;'>" + data.username + "</em>" +
-                "<span style='display:block; margin:5px 5px 5px 5px; padding:0px 5px 5px 5px; background:#5be095; border-radius:10px; max-width:60%; word-break: break-all; float:left;'>" +
-                "<span style='display: block;'>" + data.message + "</span>" +
-                "</span>" +
-                "</li>"
-            );
-            // 保存他人消息
-            saveMessage({ username: data.username, message: data.message,toUser:data.toUser});
+        if (data.username !== username) {
+            addOtherMessage(data.username, data.message);
+            saveMessage({
+                username: data.username,
+                message: data.message,
+                toUser: data.toUser
+            });
             scrollToBottom();
         }
     }
 
-    websocket.onclose = function () {}
-    websocket.onerror = function () {}
-
-    function get() {
-        const message = document.getElementById("msg-input").value.trim();
-        if (message === ""){
+    // 发送消息
+    function sendMessage() {
+        const message = $("#msg-input").val().trim();
+        if (message === "") {
             alert("请输入内容");
             return;
         }
-        const data = {};
-        data["message"] = message;
-        data["toUser"] = "all"
-        data["username"] = username;
 
-        // 显示自己的消息
-        $("#contentUl").append(
-            "<li style='clear:both; padding: 15px 10px 10px 10px; position: relative;'>" +
-            "<span style='display:block; margin:5px 5px 5px 5px; padding:0px 5px 5px 5px; background:#5be095; border-radius:10px; max-width:60%; word-break: break-all; float:right;'>" +
-            "<span style='display: block;'>" + data.message + "</span>" +
-            "</span>" +
-            "</li>"
-        );
+        const data = {
+            message: message,
+            toUser: "all",
+            username: username
+        };
 
-        // 保存自己的消息
-        saveMessage({ message: data.message, username: data.username,toUser:data.toUser});
-
+        // 渲染自己的消息
+        addSelfMessage(message);
+        saveMessage(data);
         websocket.send(JSON.stringify(data));
-        document.getElementById("msg-input").value = "";
+
+        $("#msg-input").val("");
         scrollToBottom();
     }
 
-    sendByBtn.addEventListener("keydown",(event)=>{
-        if(event.key === "Enter"){
-            get();
+    // 页面加载
+    window.onload = loadHistory;
+
+    // ================ 绑定发送事件 ================
+    $("#send-btn").click(sendMessage);
+    $("#msg-input").keydown((event) => {
+        if (event.key === "Enter" && !event.shiftKey) {
+            event.preventDefault();
+            sendMessage();
         }
+    });
+
+    // 列表切换
+    const chatItems = document.querySelectorAll('.chat-item');
+    chatItems.forEach(item => {
+        item.addEventListener('click', () => {
+            chatItems.forEach(i => i.classList.remove('active'));
+            item.classList.add('active');
+        });
     });
 </script>
 </body>
