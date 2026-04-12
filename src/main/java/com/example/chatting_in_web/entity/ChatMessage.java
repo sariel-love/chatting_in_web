@@ -2,7 +2,7 @@ package com.example.chatting_in_web.entity;
 
 import java.time.LocalDateTime;
 
-public class ChatMassage {
+public class ChatMessage {
     private Integer id;
     private Integer group_id;
     private String username;

@@ -2,6 +2,12 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="">
-     
+<mapper namespace="com.example.chatting_in_web.dao.ChatDao">
+
+    <insert id="SaveMessage" parameterType="com.example.chatting_in_web.entity.ChatMessage">
+        insert into group_content values
+            <foreach collection="list" item="m" separator=",">
+                (#{m.group_id},#{m.username},#{content},#{create_time})
+            </foreach>
+    </insert>
 </mapper>
