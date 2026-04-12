@@ -333,7 +333,7 @@
                 <img src="https://picsum.photos/48/48?random=2" alt="AI头像" class="chat-avatar">
                 <div class="chat-info">
                     <div class="chat-name">DeepSeek AI</div>
-                    <div class="chat-lastmsg"><a href="/login/aichat">点击对话</a></div>
+                    <div class="chat-lastmsg"><a href="/chat/aichat">点击对话</a></div>
                 </div>
             </div>
         </div>
@@ -388,6 +388,16 @@
         history.push(msg);
         if (history.length > 300) history = history.slice(-300);
         localStorage.setItem("chatHistory", JSON.stringify(history));
+        async function syncToDB(){
+            let history = JSON.parse(localStorage.getItem("chatHistory") || "[]");
+            const resp = await fetch("/chat/messageSave",{
+                method:"post",
+                headers:{
+                    "Content-Type":"application/json"
+                },
+                body:JSON.stringify(msg)
+            })
+        }
     }
 
     // 加载历史记录
