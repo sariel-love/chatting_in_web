@@ -56,17 +56,6 @@ public class LoginController {
         }
 
         }
-    @RequestMapping("/chat")
-    public String  toChat(){
-        log.info("跳转到群聊");
-        return "chat";
-    }
-
-    @RequestMapping("/aichat")
-    public String  toAiChat(){
-        log.info("跳转到与ai聊天");
-        return "aichat";
-    }
 
 
     @RequestMapping("/register")
