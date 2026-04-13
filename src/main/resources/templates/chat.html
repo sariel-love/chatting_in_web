@@ -384,19 +384,31 @@
 
     // 保存消息到本地
     function saveMessage(msg) {
+        const msgWithStatus = {...msg,synced:msg.synced !== undefined ? msg.synced : false}
         let history = JSON.parse(localStorage.getItem("chatHistory") || "[]");
-        history.push(msg);
+        history.push(msgWithStatus);
         if (history.length > 300) history = history.slice(-300);
         localStorage.setItem("chatHistory", JSON.stringify(history));
-        async function syncToDB(){
-            let history = JSON.parse(localStorage.getItem("chatHistory") || "[]");
-            const resp = await fetch("/chat/messageSave",{
-                method:"post",
-                headers:{
-                    "Content-Type":"application/json"
-                },
-                body:JSON.stringify(msg)
-            })
+    }
+    //同步到数据库
+    async function syncToDB(){
+        let history = JSON.parse(localStorage.getItem("chatHistory") || "[]");
+        const unsyncMsgs = history.filter(item => !item.synced);
+        const resp = await fetch("/chat/messageSave",{
+            method:"post",
+            headers:{
+                "Content-Type":"application/json"
+            },
+            body:JSON.stringify(unsyncMsgs)
+        })
+        if(resp.ok){
+            const updatedHistory = history.map(
+                item => ({
+                    ...item,
+                    synced: true
+                }));
+            localStorage.setItem("chatHistory", JSON.stringify(updatedHistory));
+            console.log("消息同步成功")
         }
     }
 
@@ -485,14 +497,17 @@
         }
 
         const data = {
-            message: message,
-            toUser: "all",
-            username: username
+            content: message,
+            group_id: "a",
+            username: username,
+            create_time: "2026-04-12 12:00:00",
+            synced:false
         };
 
         // 渲染自己的消息
         addSelfMessage(message);
         saveMessage(data);
+        syncToDB();
         websocket.send(JSON.stringify(data));
 
         $("#msg-input").val("");

@@ -3,16 +3,15 @@ package com.example.chatting_in_web.entity;
 import java.time.LocalDateTime;
 
 public class ChatMessage {
-    private Integer id;
     private Integer group_id;
     private String username;
     private String content;
     private LocalDateTime create_time;
+    private boolean synced;
 
     @Override
     public String toString() {
         return "group_content{" +
-                "id=" + id +
                 ", group_id=" + group_id +
                 ", username='" + username + '\'' +
                 ", content='" + content + '\'' +
@@ -20,12 +19,12 @@ public class ChatMessage {
                 '}';
     }
 
-    public Integer getId() {
-        return id;
+    public boolean isSynced() {
+        return synced;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setSynced(boolean synced) {
+        this.synced = synced;
     }
 
     public Integer getGroup_id() {

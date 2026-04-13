@@ -1,5 +1,6 @@
 package com.example.chatting_in_web.config;
 
+import com.example.chatting_in_web.entity.ChatMessage;
 import com.example.chatting_in_web.entity.LoginUser;
 import com.example.chatting_in_web.entity.Message;
 import com.example.chatting_in_web.service.AiService;
@@ -44,21 +45,21 @@ public class Chat implements WebSocketHandler {
         if (message.getPayloadLength() == 0) {
             return;
         }
-        Message msg = GsonUtil.fromJson(message.getPayload().toString(), Message.class);//因发送方的发送的数据二进制的码，需要将二进制的码转化成字符串
-        log.info("用户{}发送了消息：{}",msg.getUsername(),msg.getMessage());
-        if(msg.getToUser().equals("ai")) {
-                String data = aiService.AiChat(msg.getMessage());
+        ChatMessage msg = GsonUtil.fromJson(message.getPayload().toString(), Message.class);//因发送方的发送的数据二进制的码，需要将二进制的码转化成字符串
+        log.info("用户{}发送了消息：{}",msg.getUsername(),msg.getContent());
+        if(msg.getGroup_id() == 1) {
+                String data = aiService.AiChat(msg.getContent());
                 System.out.println(data);
                 JSONObject jsonObject = new JSONObject(data);
                 JSONArray choices = jsonObject.getJSONArray("choices");
                 JSONObject firstChoice = choices.getJSONObject(0);
                 String content = firstChoice.getJSONObject("message").getString("content");
                 System.out.println("ai说：" + content);
-                msg.setMessage(content);
+                msg.setContent(content);
                 msg.setUsername("deepseek");
-                msg.setToUser("ai");
+                msg.setGroup_id(1);
                 sendMessageToUser(session, new TextMessage(GsonUtil.toJsonStringIgnoreNull(msg)));
-            }else if(msg.getToUser().equals("all"))
+            }else if(msg.getGroup_id() == 2)
                 sendMessageToAll(message);
 
     }
