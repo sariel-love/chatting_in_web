@@ -13,7 +13,7 @@ public class ChatService {
     @Autowired
     ChatDao chatDao;
 
-    public void MessageSave(List<ChatMessage> messages){
-        chatDao.SaveMessage(messages);
+    public void MessageSave(ChatMessage message){
+        chatDao.SaveMessage(message);
     }
 }

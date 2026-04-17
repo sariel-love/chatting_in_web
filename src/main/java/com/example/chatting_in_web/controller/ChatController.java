@@ -2,9 +2,12 @@ package com.example.chatting_in_web.controller;
 
 import com.example.chatting_in_web.entity.ChatMessage;
 import com.example.chatting_in_web.service.ChatService;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -32,10 +35,15 @@ public class ChatController {
     @Autowired
     ChatService chatService;
 
+
+
     @RequestMapping("/messageSave")
-    public String messageSave(List<ChatMessage> list) {
-        chatService.MessageSave(list);
-        return "操作成功";
+    public ResponseEntity<?> saveMessage(@RequestBody List<ChatMessage> messages) {
+        for (ChatMessage msg : messages) {
+            System.out.println("收到消息：" + msg.getContent());
+            chatService.MessageSave(msg);
+        }
+        return ResponseEntity.ok("消息保存成功");
     }
 
 }

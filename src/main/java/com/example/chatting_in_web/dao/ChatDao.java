@@ -8,5 +8,5 @@ import java.util.List;
 
 @Mapper
 public interface ChatDao {
-    public void SaveMessage(@Param("chatMessages")List<ChatMessage> chatMessages);
+    public void SaveMessage(ChatMessage chatMessages);
 }

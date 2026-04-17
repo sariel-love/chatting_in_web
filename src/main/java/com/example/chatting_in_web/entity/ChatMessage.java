@@ -1,13 +1,36 @@
 package com.example.chatting_in_web.entity;
 
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import com.google.gson.annotations.JsonAdapter;
+import com.google.gson.annotations.SerializedName;
+
 import java.time.LocalDateTime;
 
 public class ChatMessage {
+    @SerializedName("group_id")
     private Integer group_id;
+
     private String username;
     private String content;
+
+    @JsonFormat(
+            pattern = "yyyy-MM-dd HH:mm:ss",
+            timezone = "GMT+8" // 必须加时区，否则解析空格分隔的时间会失败
+    )
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonProperty("create_time")
     private LocalDateTime create_time;
+
     private boolean synced;
+
+    public ChatMessage() {}
 
     @Override
     public String toString() {

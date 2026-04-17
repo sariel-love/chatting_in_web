@@ -421,7 +421,7 @@
                 if (item.username === username) {
                     addSelfMessage(item.message);
                 } else {
-                    addOtherMessage(item.username, item.message);
+                    addOtherMessage(item.username, item.content);
                 }
             }
         });
@@ -478,11 +478,13 @@
     websocket.onmessage = function (event) {
         const data = JSON.parse(event.data);
         if (data.username !== username) {
-            addOtherMessage(data.username, data.message);
+            addOtherMessage(data.username, data.content);
             saveMessage({
                 username: data.username,
-                message: data.message,
-                toUser: data.toUser
+                content: data.content,
+                group_id: data.group_id,
+                create_time: data.create_time,
+                synced:data.synced
             });
             scrollToBottom();
         }
@@ -498,7 +500,7 @@
 
         const data = {
             content: message,
-            group_id: "a",
+            group_id: 2,
             username: username,
             create_time: "2026-04-12 12:00:00",
             synced:false
@@ -509,6 +511,7 @@
         saveMessage(data);
         syncToDB();
         websocket.send(JSON.stringify(data));
+        console.log('发送的数据:', JSON.stringify(data));
 
         $("#msg-input").val("");
         scrollToBottom();

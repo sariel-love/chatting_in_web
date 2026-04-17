@@ -45,7 +45,9 @@ public class Chat implements WebSocketHandler {
         if (message.getPayloadLength() == 0) {
             return;
         }
-        ChatMessage msg = GsonUtil.fromJson(message.getPayload().toString(), Message.class);//因发送方的发送的数据二进制的码，需要将二进制的码转化成字符串
+        ChatMessage msg = GsonUtil.fromJson(message.getPayload().toString(), ChatMessage.class);//因发送方的发送的数据二进制的码，需要将二进制的码转化成字符串
+        System.out.println(msg);
+        System.out.println(message);
         log.info("用户{}发送了消息：{}",msg.getUsername(),msg.getContent());
         if(msg.getGroup_id() == 1) {
                 String data = aiService.AiChat(msg.getContent());
