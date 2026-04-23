@@ -417,9 +417,9 @@
         let history = JSON.parse(localStorage.getItem("chatHistory") || "[]");
         $("#contentUl").empty();
         history.forEach(item => {
-            if (item.toUser === "all") {
+            if (item.group_id === 2) {
                 if (item.username === username) {
-                    addSelfMessage(item.message);
+                    addSelfMessage(item.content);
                 } else {
                     addOtherMessage(item.username, item.content);
                 }
