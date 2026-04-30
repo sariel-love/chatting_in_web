@@ -1,6 +1,8 @@
 package com.example.chatting_in_web.controller;
 
+import com.example.chatting_in_web.entity.ChatMessage;
 import com.example.chatting_in_web.entity.LoginUser;
+import com.example.chatting_in_web.service.ChatService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -8,6 +10,7 @@ import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import com.example.chatting_in_web.service.UserService;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -39,14 +42,17 @@ public class LoginController {
             session.setAttribute("loginUser",loginUser);
             if(username != null){
                 Cookie cookie = new Cookie("username",loginUser.getUsername());
+                Cookie cookie_ = new Cookie("phone_number",loginUser.getPhone_number());
                 cookie.setMaxAge(60*60*24);
                 cookie.setPath("/");
+                cookie_.setMaxAge(60*60*24);
+                cookie_.setPath("/");
                 response.addCookie(cookie);
+                response.addCookie(cookie_);
             }else{
                 log.info("cookie has an error");
             }
-
-            return "{\"code\":\"200\",\"message\":\"success\"}";
+            return "{\"code\":\"200\",\"message\":\"success\",\"token\":\"werttuyuihb\"}";
        }else if(result.equals("Password is not true")){
             log.info("{}因密码错误无法登录",username);
            return "{\"code\":400\",\"message\":\"false\"}";
@@ -55,7 +61,7 @@ public class LoginController {
             return "{\"code\":500\",\"message\":\"false\"}";
         }
 
-        }
+    }
 
 
     @RequestMapping("/register")
@@ -63,4 +69,5 @@ public class LoginController {
         log.info("跳转到注册页面");
         return "register";
     }
+
 }

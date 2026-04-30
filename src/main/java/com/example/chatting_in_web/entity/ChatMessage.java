@@ -13,10 +13,9 @@ import com.google.gson.annotations.SerializedName;
 import java.time.LocalDateTime;
 
 public class ChatMessage {
-    @SerializedName("group_id")
     private Integer group_id;
-
     private String username;
+    private String phone_number;
     private String content;
 
     @JsonFormat(
@@ -28,26 +27,15 @@ public class ChatMessage {
     @JsonProperty("create_time")
     private LocalDateTime create_time;
 
-    private boolean synced;
-
-    public ChatMessage() {}
-
     @Override
     public String toString() {
-        return "group_content{" +
-                ", group_id=" + group_id +
+        return "ChatMessage{" +
+                "group_id=" + group_id +
                 ", username='" + username + '\'' +
+                ", phone_number='" + phone_number + '\'' +
                 ", content='" + content + '\'' +
                 ", create_time=" + create_time +
                 '}';
-    }
-
-    public boolean isSynced() {
-        return synced;
-    }
-
-    public void setSynced(boolean synced) {
-        this.synced = synced;
     }
 
     public Integer getGroup_id() {
@@ -64,6 +52,14 @@ public class ChatMessage {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getPhone_number() {
+        return phone_number;
+    }
+
+    public void setPhone_number(String phone_number) {
+        this.phone_number = phone_number;
     }
 
     public String getContent() {

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+    <title>用户注册</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+        body {
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .register-box {
+            background: #fff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 800px;
+        }
+        .register-box h1 {
+            text-align: center;
+            font-size: 32px;
+            color: #222;
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+        .form-item {
+            margin-bottom: 20px;
+        }
+        .form-item label {
+            display: block;
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 8px;
+        }
+        .form-item input,
+        .form-item select {
+            width: 100%;
+            height: 48px;
+            padding: 0 16px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            color: #333;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .form-item input:focus,
+        .form-item select:focus {
+            border-color: #409eff;
+        }
+        .gender-item {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            height: 48px;
+        }
+        .gender-item label {
+            margin-bottom: 0;
+            cursor: pointer;
+        }
+        .gender-item input[type="radio"] {
+            width: auto;
+            height: auto;
+            margin-right: 6px;
+        }
+        .btn-register {
+            width: 100%;
+            height: 48px;
+            background-color: #409eff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-top: 10px;
+        }
+        .btn-register:hover {
+            background-color: #337ecc;
+        }
+        .login-link {
+            text-align: right;
+            margin-top: 20px;
+            font-size: 16px;
+        }
+        .login-link a {
+            color: #333;
+            text-decoration: none;
+        }
+        .login-link a:hover {
+            color: #409eff;
+        }
+    </style>
+</head>
+<body>
+<div class="register-box">
+    <h1>用户注册</h1>
+    <div class="form-item">
+        <label>用户名</label>
+        <input type="text" id="username" placeholder="请输入用户名（2-20位）">
+    </div>
+    <div class="form-item">
+        <label>性别</label>
+        <div class="gender-item">
+            <label><input type="radio" name="gender" value="male">男</label>
+            <label><input type="radio" name="gender" value="female">女</label>
+            <label><input type="radio" name="gender" value="secret">保密</label>
+        </div>
+    </div>
+    <div class="form-item">
+        <label>手机号</label>
+        <input type="text" id="phone_number" placeholder="请输入11位手机号">
+        <div id="phoneTip" style="color:red; display:none;">手机号必须是11位数字</div>
+    </div>
+    <form>
+        <div class="form-item">
+            <label>邮箱</label>
+            <input type="email" id="email" placeholder="请输入您的邮箱地址" required>
+            <div id="emailHint" style="color:red; display:none;">请输入有效的邮箱格式</div>
+        </div>
+    </form>
+    <div class="form-item">
+        <label>密码</label>
+        <input type="password" id="password" placeholder="请输入6-16位密码">
+    </div>
+    <div class="form-item">
+        <label>确认密码</label>
+        <input type="password" id="password_" placeholder="请再次输入密码">
+    </div>
+    <button class="btn-register" onclick="add()">注册</button>
+    <div class="login-link">
+        <a href="/login/toLogin">已有账号？去登录</a>
+    </div>
+</div>
+</body>
+<script>
+    const emailInput = document.getElementById('email');
+    const emailHint = document.getElementById('emailHint');
+    let flag = 1;
+    emailInput.addEventListener('blur', function() {
+        if (!emailInput.validity.valid) {
+            emailHint.style.display = 'block';
+            flag=0;
+        } else {
+            emailHint.style.display = 'none';
+            flag=1;
+        }
+    });
+    const phoneInput = document.getElementById('phone_number');
+    const phoneTip = document.getElementById('phoneTip');
+
+    phoneInput.addEventListener('blur', function() {
+        const val = phoneInput.value.trim();
+        const isPhoneValid = /^\d{11}$/.test(val);
+
+        if (!isPhoneValid) {
+            phoneTip.style.display = 'block';
+            flag =0;
+        } else {
+            phoneTip.style.display = 'none';
+            flag = 1;
+        }
+    });
+
+    function add(){
+        const username = document.getElementById("username").value;
+        const sexRadio = document.querySelector('input[name="gender"]:checked');
+        const sex = sexRadio ? sexRadio.value : null;
+        const phone_number = document.getElementById("phone_number").value;
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+        const password_ = document.getElementById("password_").value;
+        if(password != password_){
+            document.getElementById("password").value = "";
+            document.getElementById("password_").value = "";
+            alert("两次密码不同，请重新输入");
+        }else if(flag == 1){
+            $.ajax({
+                type:"post",
+                url:"http://localhost:8080/user/toRegister",
+                data:{"username":username,"sex":sex,"phone_number":phone_number,"email":email,"password":password},
+                dataType:"json",
+                success: function (data){
+                    if(data.code == "200"){
+                        alert("注册成功，请前往登录");
+                    }
+                    if(data.code == "400"){
+                        alert("该用户已经存在");
+                    }
+                },
+                error: function (){
+                    alert("注册失败")
+                }
+            })
+        }else{
+            alert("格式存在错误")
+        }
+
+    }
+</script>
+</html>

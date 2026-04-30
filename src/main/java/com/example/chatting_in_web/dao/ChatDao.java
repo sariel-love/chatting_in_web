@@ -9,4 +9,6 @@ import java.util.List;
 @Mapper
 public interface ChatDao {
     public void SaveMessage(ChatMessage chatMessages);
+
+    public List<ChatMessage> getDB(int group_id);
 }

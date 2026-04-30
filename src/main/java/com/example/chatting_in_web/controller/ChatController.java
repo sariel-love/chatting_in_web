@@ -7,9 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.xml.transform.Result;
 import java.util.List;
@@ -44,6 +42,13 @@ public class ChatController {
             chatService.MessageSave(msg);
         }
         return ResponseEntity.ok("消息保存成功");
+    }
+
+    @ResponseBody
+    @GetMapping("/getDB")
+    public List<ChatMessage>  getDB(@RequestParam("group_id") Integer groupId){
+        System.out.println(chatService.GetMessage(groupId));
+        return chatService.GetMessage(groupId);
     }
 
 }
