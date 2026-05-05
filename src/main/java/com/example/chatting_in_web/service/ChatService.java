@@ -22,4 +22,9 @@ public class ChatService {
         return chatDao.getDB(group_id);
     }
 
+
+    public void SaveMoreMessage(List<ChatMessage> chatMessages){
+        chatDao.SaveMoreMessage(chatMessages);
+    }
+
 }

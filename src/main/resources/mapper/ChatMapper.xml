@@ -12,4 +12,8 @@
     <select id="getDB" parameterType="java.lang.Integer">
         select group_id,username,phone_number,content,create_time from group_content where group_id = #{group_id}
     </select>
+
+    <insert id="SaveMoreMessage" >
+
+    </insert>
 </mapper>

@@ -14,6 +14,14 @@ spring:
     mode: HTML5
   mvc:
     static-path-pattern: /static/**
+  # Redis
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password:
+      database: 0
+
 #        mybatis
 mybatis:
     mapper-locations: classpath:mapper/*.xml  #对应mapper映射xml文件所在路径

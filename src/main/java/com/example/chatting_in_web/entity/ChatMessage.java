@@ -26,6 +26,7 @@ public class ChatMessage {
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonProperty("create_time")
     private LocalDateTime create_time;
+    private Integer isSave;
 
     @Override
     public String toString() {
@@ -36,6 +37,14 @@ public class ChatMessage {
                 ", content='" + content + '\'' +
                 ", create_time=" + create_time +
                 '}';
+    }
+
+    public Integer getIsSave() {
+        return isSave;
+    }
+
+    public void setIsSave(Integer isSave) {
+        this.isSave = isSave;
     }
 
     public Integer getGroup_id() {

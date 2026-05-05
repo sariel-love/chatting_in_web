@@ -11,4 +11,6 @@ public interface ChatDao {
     public void SaveMessage(ChatMessage chatMessages);
 
     public List<ChatMessage> getDB(int group_id);
+
+    public void SaveMoreMessage(List<ChatMessage> chatMessages);
 }
