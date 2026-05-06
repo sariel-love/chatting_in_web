@@ -8,9 +8,10 @@ import java.util.List;
 
 @Mapper
 public interface ChatDao {
-    public void SaveMessage(ChatMessage chatMessages);
+     void batchInsert(@Param("messages") List<ChatMessage> messages);
 
-    public List<ChatMessage> getDB(int group_id);
+     void SaveMessage(ChatMessage chatMessages);
 
-    public void SaveMoreMessage(List<ChatMessage> chatMessages);
+     List<ChatMessage> getDB(int group_id);
+
 }

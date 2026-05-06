@@ -54,7 +54,7 @@ public class Chat implements WebSocketHandler {
         LocalDateTime now = LocalDateTime.now();
         msg.setCreate_time(now);
         System.out.println(msg);
-        chatService.MessageSave(msg);
+        chatService.MessageSaveToRedis(msg);
         log.info("用户{}发送了消息：{}",msg.getUsername(),msg.getContent());
         if(msg.getGroup_id() == 1) {
                 String data = aiService.AiChat(msg.getContent());
@@ -68,7 +68,7 @@ public class Chat implements WebSocketHandler {
                 msg.setUsername("deepseek");
                 msg.setGroup_id(1);
                 System.out.println(msg);
-                chatService.MessageSave(msg);
+                chatService.MessageSaveToRedis(msg);
                 sendMessageToUser(session, new TextMessage(GsonUtil.toJsonStringIgnoreNull(msg)));
             }else if(msg.getGroup_id() == 2)
                 sendMessageToAll(message);

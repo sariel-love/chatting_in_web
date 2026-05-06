@@ -35,14 +35,14 @@ public class ChatController {
 
 
 
-    @RequestMapping("/messageSave")
-    public ResponseEntity<?> saveMessage(@RequestBody List<ChatMessage> messages) {
-        for (ChatMessage msg : messages) {
-            System.out.println("收到消息：" + msg.getContent());
-            chatService.MessageSave(msg);
-        }
-        return ResponseEntity.ok("消息保存成功");
-    }
+//    @RequestMapping("/messageSave")
+//    public ResponseEntity<?> saveMessage(@RequestBody List<ChatMessage> messages) {
+//        for (ChatMessage msg : messages) {
+//            System.out.println("收到消息：" + msg.getContent());
+//            chatService.MessageSave(msg);
+//        }
+//        return ResponseEntity.ok("消息保存成功");
+//    }
 
     @ResponseBody
     @GetMapping("/getDB")

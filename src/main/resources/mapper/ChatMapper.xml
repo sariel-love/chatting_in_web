@@ -13,7 +13,10 @@
         select group_id,username,phone_number,content,create_time from group_content where group_id = #{group_id}
     </select>
 
-    <insert id="SaveMoreMessage" >
-
+    <insert id="batchInsert" >
+        insert into group_content (group_id,username,phone_number,content,create_time) values
+                <foreach collection="messages" item="message" separator=",">
+                    (#{message.group_id},#{message.username},#{message.phone_number},#{message.content},#{message.create_time})
+                </foreach>
     </insert>
 </mapper>
