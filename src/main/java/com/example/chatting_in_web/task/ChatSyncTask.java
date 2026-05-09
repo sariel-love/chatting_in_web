@@ -15,7 +15,7 @@ public class ChatSyncTask {
     public ChatSyncTask(ChatService chatService) {
         this.chatService = chatService;
     }
-    
+
     @Scheduled(fixedRate = 30000)
     public void syncTask() {
         try {

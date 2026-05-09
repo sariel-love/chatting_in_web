@@ -393,35 +393,26 @@
     const username = getCookie("username");
     const phone_number = getCookie("phone_number")
     console.log(username);
-
-    window.onload = loadHistory;
-
-    const KEY_PREFIX = window.location.port + "_" + username + "_";
-
-    function setLocal(key, val) {
-        localStorage.setItem(KEY_PREFIX + key, JSON.stringify(val));
-    }
-    function getLocal(key) {
-        let val = localStorage.getItem(KEY_PREFIX + key);
-        return val ? JSON.parse(val) : null;
-    }
-    function removeLocal(key) {
-        localStorage.removeItem(KEY_PREFIX + key);
-    }
-
-
-
-    function loadHistory() {
-        const token = localStorage.getItem(username+"ai_token");
-        if (!token) {
-            fromBDToLocalHistory(function () {
-                renderAllChat();
-                localStorage.setItem(username+"ai_token", "token");
-            });
-            return;
-        }
+    window.onload = function (){
         renderAllChat();
-    }
+    };
+
+
+
+
+
+
+    // function loadHistory() {
+    //     const token = localStorage.getItem(username+"ai_token");
+    //     if (!token) {
+    //         fromBDToLocalHistory(function () {
+    //             renderAllChat();
+    //             localStorage.setItem(username+"ai_token", "token");
+    //         });
+    //         return;
+    //     }
+    //     renderAllChat();
+    // }
 
 
     function getCookie(Cname){
@@ -436,48 +427,61 @@
         }
     }
 
-    // 保存单条消息
-    function saveMessage(msg) {
-        const msgWithStatus = {...msg,synced:msg.synced !== undefined ? msg.synced : false}
-        let history = JSON.parse(localStorage.getItem(username+"ai_chatHistory") || "[]");
-        history.push(msgWithStatus);
-        if (history.length > 300) history = history.slice(-300);
-        localStorage.setItem(username+"ai_chatHistory", JSON.stringify(history));
-    }
+    // // 保存单条消息
+    // function saveMessage(msg) {
+    //     const msgWithStatus = {...msg,synced:msg.synced !== undefined ? msg.synced : false}
+    //     let history = JSON.parse(localStorage.getItem(username+"ai_chatHistory") || "[]");
+    //     history.push(msgWithStatus);
+    //     if (history.length > 300) history = history.slice(-300);
+    //     localStorage.setItem(username+"ai_chatHistory", JSON.stringify(history));
+    // }
 
 
-    function fromBDToLocalHistory(callback) {
-        $.ajax({
-            url: "/chat/getDB",
-            type: "get",
-            data: { group_id: 1 },
-            dataType: "json",
-            success: function (data) {
-                localStorage.setItem(username+"ai_chatHistory", JSON.stringify(data));
-                console.log(data);
-                callback();
-            },
-            error: function () {
-                localStorage.setItem(username+"ai_chatHistory", "[]");
-                callback();
-            }
-        });
-    }
+    // function fromBDToLocalHistory(callback) {
+    //     $.ajax({
+    //         url: "/chat/getDB",
+    //         type: "get",
+    //         data: { group_id: 1 },
+    //         dataType: "json",
+    //         success: function (data) {
+    //             localStorage.setItem(username+"ai_chatHistory", JSON.stringify(data));
+    //             console.log(data);
+    //             callback();
+    //         },
+    //         error: function () {
+    //             localStorage.setItem(username+"ai_chatHistory", "[]");
+    //             callback();
+    //         }
+    //     });
+    // }
 
     function renderAllChat() {
-        let history1 = JSON.parse(localStorage.getItem(username+"ai_chatHistory") || "[]");
-        $("#contentUl").empty();
-        history1.forEach(item => {
-            if (item.group_id === 1 && item.phone_number === phone_number) {
-                if (item.username === username) {
-                    addSelfMessage(item.content);
-                } else {
-                    addOtherMessage(item.username, item.content);
+        $.ajax({
+            type: "get",
+            url :"/chat/fromRedisGetMessage",
+            data: {groupID: 1},
+            dataType:"json",
+            success : function (data) {
+                $("#contentUl").empty();
+                console.log(data)
+                if(data) {
+                    data.forEach(item => {
+                        if(item.phone_number === phone_number) {
+                            if (item.username === username) {
+                                addSelfMessage(item.content);
+                            } else {
+                                addOtherMessage(item.username, item.content);
+                            }
+                        }
+                    });
+                    scrollToBottom();
                 }
+            },
+            error: function (){
+                console.log("获取聊天记录失败");
+                $("#contentUl").empty().append("<li class='error'> 加载聊天记录失败，请重试</li>");
             }
-        });
-
-        scrollToBottom();
+        })
     }
 
     // 滚动到底部
@@ -530,7 +534,6 @@
         console.log(data);
         if (data.username != username){
             addOtherMessage(data.username, data.content);
-            saveMessage(data);
             scrollToBottom();
         }
     }
@@ -559,7 +562,6 @@
         };
 
         addSelfMessage(message);
-        saveMessage(data);
         websocket.send(JSON.stringify(data));
         document.getElementById("msg-input").value = "";
         scrollToBottom();
@@ -599,10 +601,6 @@
     // 退出登录
     function logout() {
         if(confirm("确定退出登录？")){
-            localStorage.removeItem(username+"ai_chatHistory");
-            localStorage.removeItem(username+"ai_token");
-            localStorage.removeItem(username+"token")
-            $("#contentUl").empty();
             alert("已退出登录");
             window.location.href = "http://localhost:8080/login/toLogin";
         }

@@ -44,11 +44,18 @@ public class ChatController {
 //        return ResponseEntity.ok("消息保存成功");
 //    }
 
+//    @ResponseBody
+//    @GetMapping("/getDB")
+//    public List<ChatMessage>  getDB(@RequestParam("group_id") Integer groupId){
+//        System.out.println(chatService.GetMessage(groupId));
+//        return chatService.GetMessage(groupId);
+//    }
+
+    @RequestMapping("/fromRedisGetMessage")
     @ResponseBody
-    @GetMapping("/getDB")
-    public List<ChatMessage>  getDB(@RequestParam("group_id") Integer groupId){
-        System.out.println(chatService.GetMessage(groupId));
-        return chatService.GetMessage(groupId);
+    public List<ChatMessage> fromRedisGetMessage(Integer groupID) {
+        List<ChatMessage> messages = chatService.getMessageFromRedis(String.valueOf(groupID));
+        return messages;
     }
 
 }

@@ -396,21 +396,9 @@
     const phone_number = getCookie("phone_number")
     console.log("当前用户：", username);
 
-    window.onload = loadHistory;
-
-
-
-    function loadHistory() {
-        const token = localStorage.getItem(username+"token");
-        if (!token) {
-            fromBDToLocalHistory(function () {
-                renderAllChat();
-                localStorage.setItem(username+"token", "token");
-            });
-            return;
-        }
+    window.onload = function (){
         renderAllChat();
-    }
+    };
 
 
     function getCookie(Cname) {
@@ -425,46 +413,42 @@
         return "游客";
     }
 
-    function saveMessage(msg) {
-        const msgWithStatus = {...msg,synced:msg.synced !== undefined ? msg.synced : false}
-        let history = JSON.parse(localStorage.getItem(username+"chatHistory") || "[]");
-        history.push(msgWithStatus);
-        if (history.length > 300) history = history.slice(-300);
-        localStorage.setItem(username+"chatHistory", JSON.stringify(history));
-    }
+    // function saveMessage(msg) {
+    //     const msgWithStatus = {...msg,synced:msg.synced !== undefined ? msg.synced : false}
+    //     let history = JSON.parse(localStorage.getItem(username+"chatHistory") || "[]");
+    //     history.push(msgWithStatus);
+    //     if (history.length > 300) history = history.slice(-300);
+    //     localStorage.setItem(username+"chatHistory", JSON.stringify(history));
+    // }
 
 
-    function fromBDToLocalHistory(callback) {
-        $.ajax({
-            url: "/chat/getDB",
-            type: "get",
-            data: { group_id: 2 },
-            dataType: "json",
-            success: function (data) {
-                localStorage.setItem(username+"chatHistory", JSON.stringify(data));
-                callback(); // 渲染
-            },
-            error: function () {
-                localStorage.setItem(username+"chatHistory", "[]");
-                callback();
-            }
-        });
-    }
+
 
     function renderAllChat() {
-        let history1 = JSON.parse(localStorage.getItem(username+"chatHistory") || "[]");
-        $("#contentUl").empty();
-        history1.forEach(item => {
-            if (item.group_id === 2) {
-                if (item.username === username) {
-                    addSelfMessage(item.content);
-                } else {
-                    addOtherMessage(item.username, item.content);
+        $.ajax({
+            type: "get",
+            url :"/chat/fromRedisGetMessage",
+            data: {groupID: 2},
+            dataType:"json",
+            success : function (data) {
+                $("#contentUl").empty();
+                console.log(data)
+                if(data) {
+                    data.forEach(item => {
+                        if (item.username === username) {
+                            addSelfMessage(item.content);
+                        } else {
+                            addOtherMessage(item.username, item.content);
+                        }
+                    });
+                    scrollToBottom();
                 }
+            },
+            error: function (){
+                console.log("获取聊天记录失败");
+                $("#contentUl").empty().append("<li class='error'> 加载聊天记录失败，请重试</li>");
             }
-        });
-
-        scrollToBottom();
+        })
     }
 
     // 滚动到底部
@@ -512,12 +496,6 @@
         const data = JSON.parse(event.data);
         if (data.username !== username) {
             addOtherMessage(data.username, data.content);
-            saveMessage({
-                username: data.username,
-                content: data.content,
-                group_id: data.group_id,
-                create_time: data.create_time,
-            });
             scrollToBottom();
         }
     }
@@ -538,7 +516,6 @@
             create_time: "2026-04-12 12:00:00",
         };
         addSelfMessage(message);
-        saveMessage(data);
         websocket.send(JSON.stringify(data));
         console.log('发送的数据:', JSON.stringify(data));
 
@@ -564,6 +541,7 @@
             item.classList.add('active');
         });
     });
+
     $("#moreBtn").click(function(e){
         e.stopPropagation();
         $("#dropdownMenu").toggle();
@@ -578,10 +556,6 @@
     // 退出登录
     function logout() {
         if(confirm("确定退出登录？")){
-            localStorage.removeItem(username+"chatHistory");
-            localStorage.removeItem(username+"token");
-            localStorage.removeItem(username+"ai_token");
-            $("#contentUl").empty();
             alert("已退出登录");
             window.location.href = "http://localhost:8080/login/toLogin";
         }
