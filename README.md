@@ -32,6 +32,8 @@ z<h1>基于Springboot+websocket+redis的网络聊天室</h1>
 </h4>
 
 <h3>现阶段工作；</h4>
-    
+Redisson
+RabbitMQ
+MinIO
         
 
