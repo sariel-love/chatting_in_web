@@ -28,7 +28,7 @@ mybatis:
     type-aliases-package: com.example.chatting_in_web.entity  #对应实体类路径
 ai:
   deepseek:
-    api-key: Bearer sk-c044acbe7b634ad4a7b7d918dc8925b1 # 替换为你的DeepSeek API密钥
+    api-key: Bearer 1111111 # 替换为你的DeepSeek API密钥
     base-url: https://api.deepseek.com/chat/completions # DeepSeek API的基础URL
     model: deepseek-chat # 使用的模型，可以根据需要更改为其他模型，如deepseek-v2等
     max-tokens: 2048
