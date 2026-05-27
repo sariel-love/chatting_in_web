@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 @Component
 @Slf4j
@@ -56,21 +57,46 @@ public class Chat implements WebSocketHandler {
         System.out.println(msg);
         chatService.MessageSaveToRedis(msg);
         log.info("用户{}发送了消息：{}",msg.getUsername(),msg.getContent());
-        if(msg.getGroup_id() == 1) {
-                String data = aiService.AiChat(msg.getContent());
-                System.out.println(data);
-                JSONObject jsonObject = new JSONObject(data);
-                JSONArray choices = jsonObject.getJSONArray("choices");
-                JSONObject firstChoice = choices.getJSONObject(0);
-                String content = firstChoice.getJSONObject("message").getString("content");
-                System.out.println("ai说：" + content);
-                msg.setContent(content);
-                msg.setUsername("deepseek");
-                msg.setGroup_id(1);
-                System.out.println(msg);
-                chatService.MessageSaveToRedis(msg);
-                sendMessageToUser(session, new TextMessage(GsonUtil.toJsonStringIgnoreNull(msg)));
-            }else if(msg.getGroup_id() == 2)
+//        if(msg.getGroup_id() == 1) {
+//
+//
+////                String data = aiService.AiChat(msg.getContent());
+////                System.out.println(data);
+////                JSONObject jsonObject = new JSONObject(data);
+////                JSONArray choices = jsonObject.getJSONArray("choices");
+////                JSONObject firstChoice = choices.getJSONObject(0);
+////                String content = firstChoice.getJSONObject("message").getString("content");
+////                System.out.println("ai说：" + content);
+////                msg.setContent(content);
+////                msg.setUsername("deepseek");
+////                msg.setGroup_id(1);
+////                System.out.println(msg);
+////                chatService.MessageSaveToRedis(msg);
+////                sendMessageToUser(session, new TextMessage(GsonUtil.toJsonStringIgnoreNull(msg)));
+//            }
+//
+          if (msg.getGroup_id() == 1) {
+            // 异步调用 AI，避免阻塞当前线程
+                CompletableFuture.supplyAsync(() -> aiService.AiChat(msg.getContent()))
+                .thenAccept(aiResponse -> {
+                try {
+                    JSONObject jsonObject = new JSONObject(aiResponse);
+                    System.out.println(aiResponse);
+                    JSONArray choices = jsonObject.getJSONArray("choices");
+                    JSONObject firstChoice = choices.getJSONObject(0);
+                    String content = firstChoice.getJSONObject("message").getString("content");
+                    System.out.println("ai说：" + content);
+                    msg.setContent(content);
+                    msg.setUsername("deepseek");
+                    msg.setGroup_id(1);
+                    System.out.println(msg);
+                    chatService.MessageSaveToRedis(msg);
+                    sendMessageToUser(session, new TextMessage(GsonUtil.toJsonStringIgnoreNull(msg)));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+          } else if(msg.getGroup_id() == 2)
                 sendMessageToAll(message);
 
     }
