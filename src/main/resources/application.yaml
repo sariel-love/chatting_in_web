@@ -39,7 +39,7 @@ ai:
   response:
       topic-prefix: "ai:responses:"
   deepseek:
-    api-key: Bearer *********************** # 替换为你的DeepSeek API密钥
+    api-key: Bearer sk-14b3f5ab12744c25a50abfeb259eadd8 # 替换为你的DeepSeek API密钥
     base-url: https://api.deepseek.com/chat/completions # DeepSeek API的基础URL
     model: deepseek-chat
     max-tokens: 2048

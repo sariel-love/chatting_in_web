@@ -63,8 +63,11 @@ public class WebSocketSessionManager {
         if (userId == null || session == null) return;
         System.out.println(userId);
         localSessions.put(userId, session);
+        WebSocketSession session_ = localSessions.get(userId);
+        System.out.println(session_+"!!!!!!!!!!!!!");
         try {
             userInstanceMap.put(userId, instanceId);
+
         } catch (Exception ex) {
             log.warn("registerSession: 写 Redis userInstanceMap 失败 userId={}, ex={}", userId, ex.getMessage());
         }
@@ -77,7 +80,7 @@ public class WebSocketSessionManager {
      */
     public void unregisterSession(String userId) {
         if (userId == null) return;
-        localSessions.remove(userId);
+//        localSessions.remove(userId);
         try {
             String current = userInstanceMap.get(userId);
             if (instanceId.equals(current)) {
@@ -107,9 +110,9 @@ public class WebSocketSessionManager {
             return;
         }
         if (!session.isOpen()) {
-            localSessions.remove(userId);
+//            localSessions.remove(userId);
             log.debug("sendToLocalSession: session closed for userId={}", userId);
-            return;
+//            return;
         }
         System.out.println(payload+"2222222222222222");
         try {
