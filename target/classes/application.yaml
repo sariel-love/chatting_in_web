@@ -20,19 +20,37 @@ spring:
       host: localhost
       port: 6379
       password:
-      database: 0
+      lettuce:
+        pool:
+          max-active: 64       # 最大连接数
+          min-idle: 10         # 最小空闲连接数
 
 #        mybatis
 mybatis:
     mapper-locations: classpath:mapper/*.xml  #对应mapper映射xml文件所在路径
     type-aliases-package: com.example.chatting_in_web.entity  #对应实体类路径
 ai:
+  queue:
+    name: "ai:queue"
+  lock:
+      prefix: "ai:lock:user:"
+      wait-seconds: 5
+      lease-seconds: 300
+  response:
+      topic-prefix: "ai:responses:"
   deepseek:
-    api-key: Bearer sk-c044acbe7b634ad4a7b7d918dc8925b1 # 替换为你的DeepSeek API密钥
+    api-key: Bearer sk-f7f6751e7437412cbb345bb235666779 # 替换为你的DeepSeek API密钥
     base-url: https://api.deepseek.com/chat/completions # DeepSeek API的基础URL
-    model: deepseek-chat # 使用的模型，可以根据需要更改为其他模型，如deepseek-v2等
+    model: deepseek-chat
     max-tokens: 2048
     temperature: 0.7
     top-p: 1.0
     timeout:
-      seconds: 30 # 请求超时时间，单位为毫秒
+      seconds: 120 # 请求超时时间，单位为毫秒
+
+
+redisson:
+  address: "redis://127.0.0.1:6379"
+  password: ""          # 若无密码留空
+  connectionPoolSize: 64
+  connectionMinimumIdleSize: 10

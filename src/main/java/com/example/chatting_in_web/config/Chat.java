@@ -1,14 +1,19 @@
 package com.example.chatting_in_web.config;
 
+import com.example.chatting_in_web.entity.AiRequest;
 import com.example.chatting_in_web.entity.ChatMessage;
 import com.example.chatting_in_web.entity.LoginUser;
 import com.example.chatting_in_web.entity.Message;
 import com.example.chatting_in_web.service.AiService;
 import com.example.chatting_in_web.service.ChatService;
 import com.example.chatting_in_web.util.GsonUtil;
+import com.example.chatting_in_web.util.WebSocketSessionManager;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.redisson.api.RQueue;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.*;
@@ -25,17 +30,25 @@ public class Chat implements WebSocketHandler {
 
     public static final Map<String,WebSocketSession> USERS = new HashMap<>();
 
+    @Autowired
+    private WebSocketSessionManager sessionManager;
+
+    @Autowired
+    private RedissonClient redissonClient;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         LoginUser loginUser = (LoginUser) session.getAttributes().get("loginUser");
         if(loginUser != null) {
-            USERS.put(loginUser.getUsername(), session);
-            log.info("用户{}{}加入在线用户列表",loginUser.getUsername(),loginUser.getPhone_number());
+            String username = loginUser.getUsername();
+            USERS.put(username, session);
+            System.out.println(username);
+            sessionManager.registerSession(username, session);
+            log.info("用户{}{}加入在线用户列表",username,loginUser.getPhone_number());
         }
-//        if(session.getAttributes().get("AiUser") != null){
-//            USERS.put("AiUser",session);
-//            log.info("ai加入在线用户列表");
-//        }
     }
 
     
@@ -54,7 +67,6 @@ public class Chat implements WebSocketHandler {
         System.out.println(msg);
         LocalDateTime now = LocalDateTime.now();
         msg.setCreate_time(now);
-        System.out.println(msg);
         chatService.MessageSaveToRedis(msg);
         log.info("用户{}发送了消息：{}",msg.getUsername(),msg.getContent());
 //        if(msg.getGroup_id() == 1) {
@@ -76,26 +88,16 @@ public class Chat implements WebSocketHandler {
 //            }
 //
           if (msg.getGroup_id() == 1) {
-            // 异步调用 AI，避免阻塞当前线程
-                CompletableFuture.supplyAsync(() -> aiService.AiChat(msg.getContent()))
-                .thenAccept(aiResponse -> {
-                try {
-                    JSONObject jsonObject = new JSONObject(aiResponse);
-                    System.out.println(aiResponse);
-                    JSONArray choices = jsonObject.getJSONArray("choices");
-                    JSONObject firstChoice = choices.getJSONObject(0);
-                    String content = firstChoice.getJSONObject("message").getString("content");
-                    System.out.println("ai说：" + content);
-                    msg.setContent(content);
-                    msg.setUsername("deepseek");
-                    msg.setGroup_id(1);
-                    System.out.println(msg);
-                    chatService.MessageSaveToRedis(msg);
-                    sendMessageToUser(session, new TextMessage(GsonUtil.toJsonStringIgnoreNull(msg)));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            });
+              // 入队到 Redisson 队列，由 AiQueueProcessor 异步消费
+              try {
+                  String replyTopic = sessionManager.getResponseTopicName(); // ai:responses:{instanceId}
+                  AiRequest req = new AiRequest(msg.getUsername(), msg.getContent(), replyTopic);
+                  RQueue<String> queue = redissonClient.getQueue("ai:queue");
+                  String json = objectMapper.writeValueAsString(req);
+                  queue.add(json);
+              } catch (Exception e) {
+                  e.printStackTrace();
+              }
           } else if(msg.getGroup_id() == 2)
                 sendMessageToAll(message);
 
@@ -109,10 +111,10 @@ public class Chat implements WebSocketHandler {
             }
         }
     }
-//私发
-    public void  sendMessageToUser(WebSocketSession session,WebSocketMessage<?> message) throws IOException{
-        session.sendMessage(message);
-    }
+////私发
+//    public void  sendMessageToUser(WebSocketSession session,WebSocketMessage<?> message) throws IOException{
+//        session.sendMessage(message);
+//    }
 
 
 
@@ -123,7 +125,12 @@ public class Chat implements WebSocketHandler {
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus closeStatus) throws Exception {
-
+        LoginUser loginUser = (LoginUser) session.getAttributes().get("loginUser");
+        if (loginUser != null) {
+            String username = loginUser.getUsername();
+            USERS.remove(username);
+            sessionManager.unregisterSession(username);
+        }
     }
 
     @Override

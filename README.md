@@ -109,7 +109,9 @@ chatting_in_web/
 │  │        └─ register.html
 └─ target/  （构建产物）
 
-
+Redisson
+RabbitMQ
+MinIO
 
 
 
